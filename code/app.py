@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 import mysql.connector
 
 from resources.doctor import DoctorRegister, Doctor, DoctorLogin, DoctorLogout, TokenRefresh
+from resources.patient import Patient,PatientLogin,PatientRegister,TokenRefresh,PatientLogout
 from blacklist import BLACKLIST
 
 app = Flask(__name__)
@@ -21,6 +22,7 @@ def create_tables():
     db.create_all()
 
 jwt = JWTManager(app)
+
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
     if (
@@ -91,6 +93,11 @@ api.add_resource(Doctor, "/doctor/<int:doctor_id>")
 api.add_resource(DoctorLogin, "/doctor_login")
 api.add_resource(DoctorLogout, "/doctor_logout")
 api.add_resource(TokenRefresh, "/doctor_refresh")
+api.add_resource(PatientRegister, '/patient/reg')
+api.add_resource(Patient, '/patient/<int:patient_id>')
+api.add_resource(PatientLogin, '/patient/login')
+api.add_resource(TokenRefresh, '/patient/refresh')
+api.add_resource(PatientLogout, '/patient/logout')
 
 if __name__ == "__main__":
     from db import db
