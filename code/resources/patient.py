@@ -11,7 +11,7 @@ from flask_jwt_extended import(
 from models.patient import PatientModel
 from blacklist import BLACKLIST
 
-                                                                        
+                                     
 class PatientRegister(Resource):
     patient_parser = reqparse.RequestParser()
     patient_parser.add_argument('username',
