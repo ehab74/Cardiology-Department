@@ -109,20 +109,20 @@ class PatientLogin(Resource):
         patient = PatientModel.find_by_username(data['username'])
 
         if patient and safe_str_cmp(patient.password,data['password']):
-            access_token = create_access_token(identity = patient.id, fresh = True)
-            refresh_token = create_refresh_token(patient.id)
+            access_token = create_access_token(identity = patient.id, fresh = True, user_claims={'type': 'patient'})
+            refresh_token = create_refresh_token(identity=patient.id, user_claims={'type': 'patient'})
             return {
                 'access_token': access_token,
                 'refresh_token': refresh_token
             },200
         return {'message': 'Invaild credentials'},401                        
 
-class TokenRefresh(Resource):
-    @jwt_refresh_token_required
-    def post(self):
-        current_patient = get_jwt_identity()
-        new_token = create_access_token (identity = current_patient,fresh = False)
-        return {"access_token":new_token},200        
+# class TokenRefresh(Resource):
+#     @jwt_refresh_token_required
+#     def post(self):
+#         current_patient = get_jwt_identity()
+#         new_token = create_access_token (identity = current_patient,fresh = False)
+#         return {"access_token":new_token},200        
 
 class PatientLogout(Resource):  
     @jwt_required

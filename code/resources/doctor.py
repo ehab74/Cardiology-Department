@@ -107,10 +107,10 @@ class DoctorLogout(Resource):
         return {"message": USER_LOGGED_OUT.format(doctor_id=doctor_id)}
 
 
-class TokenRefresh(Resource):
-    @classmethod
-    @jwt_refresh_token_required
-    def post(cls):
-        current_user = get_jwt_identity()
-        new_token = create_access_token(identity=current_user, fresh=False)
-        return {"access_token": new_token}, 200
+# class TokenRefresh(Resource):
+#     @classmethod
+#     @jwt_refresh_token_required
+#     def post(cls):
+#         current_user = get_jwt_identity()
+#         new_token = create_access_token(identity=current_user, fresh=False)
+#         return {"access_token": new_token}, 200
