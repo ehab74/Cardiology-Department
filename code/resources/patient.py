@@ -11,7 +11,7 @@ from flask_jwt_extended import(
 from models.patient import PatientModel
 from blacklist import BLACKLIST
 
-                                     
+
 class PatientRegister(Resource):
     patient_parser = reqparse.RequestParser()
     patient_parser.add_argument('username',
@@ -65,6 +65,9 @@ class PatientRegister(Resource):
         if PatientModel.find_by_username(data['username']):
             return {"message": "A user with that username already exists"}, 400
 
+        if PatientModel.find_by_email(data['email']):
+            return {"message": "A user with that email already exists"}, 400
+
         patient = PatientModel(**data)
         patient.save_to_db()
 
@@ -109,24 +112,26 @@ class PatientLogin(Resource):
         patient = PatientModel.find_by_username(data['username'])
 
         if patient and safe_str_cmp(patient.password,data['password']):
-            access_token = create_access_token(identity = patient.id, fresh = True)
-            refresh_token = create_refresh_token(patient.id)
+            access_token = create_access_token(identity = patient.id, fresh = True, user_claims={'type': 'patient'})
+            refresh_token = create_refresh_token(identity=patient.id, user_claims={'type': 'patient'})
             return {
                 'access_token': access_token,
                 'refresh_token': refresh_token
             },200
         return {'message': 'Invaild credentials'},401                        
 
-class TokenRefresh(Resource):
-    @jwt_refresh_token_required
-    def post(self):
-        current_patient = get_jwt_identity()
-        new_token = create_access_token (identity = current_patient,fresh = False)
-        return {"access_token":new_token},200        
+
+#class pTokenRefresh(Resource):
+#    @jwt_refresh_token_required
+#    def post(self):
+#        current_patient = get_jwt_identity()
+#        new_token = create_access_token (identity = current_patient,fresh = False)
+#        return {"access_token":new_token},200        
+
 
 class PatientLogout(Resource):  
     @jwt_required
     def post(self):
         jti = get_raw_jwt()['jti'] #jti is a "JWT ID", a unique identifier for a JWT
         BLACKLIST.add(jti)
-        return {'message': 'Sucessfully logged out'},200        
+        return {'message': 'Sucessfully logged out'},200           

@@ -2,13 +2,16 @@ from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 import mysql.connector
+import pymysql
 
 from resources.doctor import DoctorRegister, Doctor, DoctorLogin, DoctorLogout, TokenRefresh
-from resources.patient import Patient,PatientLogin,PatientRegister,TokenRefresh,PatientLogout
+from resources.patient import Patient,PatientLogin,PatientRegister,pTokenRefresh,PatientLogout
 from blacklist import BLACKLIST
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+pymysql.install_as_MySQLdb()
+
+app = Flask(__name__)       
+app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://root:mysql@localhost/cardio'#"sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 app.config["JWT_BLACKLIST_ENABLED"] = True
@@ -16,9 +19,16 @@ app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = ["access", "refresh"]
 app.secret_key = "my_secret_key"
 api = Api(app)
 
+database = "cardio"
 
 @app.before_first_request
 def create_tables():
+    engine = db.create_engine('mysql+pymysql://root:mysql@localhost',{}) # connect to server
+    existing_databases = engine.execute("SHOW DATABASES")
+    existing_databases = [d[0] for d in existing_databases]
+
+    if database not in existing_databases:
+       engine.execute("CREATE DATABASE {}".format(database))
     db.create_all()
 
 jwt = JWTManager(app)
@@ -96,7 +106,7 @@ api.add_resource(TokenRefresh, "/doctor_refresh")
 api.add_resource(PatientRegister, '/patient/reg')
 api.add_resource(Patient, '/patient/<int:patient_id>')
 api.add_resource(PatientLogin, '/patient/login')
-api.add_resource(TokenRefresh, '/patient/refresh')
+api.add_resource(pTokenRefresh, '/patient/refresh')
 api.add_resource(PatientLogout, '/patient/logout')
 
 if __name__ == "__main__":

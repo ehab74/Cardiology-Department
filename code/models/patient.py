@@ -3,8 +3,8 @@ from db import db
 class PatientModel (db.Model):
     __tablename__ = "Patients"
 
-    first_name = db.Column(db.String(80))
     id = db.Column(db.Integer,primary_key = True)
+    first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))
     email = db.Column(db.String(80),unique = True)
     mobile = db.Column(db.String(80))
@@ -33,8 +33,7 @@ class PatientModel (db.Model):
         "mobile": self.mobile,
         "gender": self.gender,
         "age":self.age,
-        "username":self.username,
-        "address":self.address
+        "username":self.username
         } 
       
     def save_to_db(self):
@@ -52,4 +51,8 @@ class PatientModel (db.Model):
     @classmethod
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
+
+    @classmethod
+    def find_by_email(cls, email):
+        return cls.query.filter_by(email=email).first()    
 
