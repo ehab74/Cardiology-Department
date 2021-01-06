@@ -9,12 +9,11 @@ from flask_jwt_extended import (
     jwt_required,
     get_raw_jwt,
     get_jwt_identity,
-    get_jwt_claims
+    get_jwt_claims,
 )
 from blacklist import BLACKLIST
 
 BLANK = "This field cannot be left blank."
-
 
 
 BLANK_ERROR = "'{}' cannot be blank."
@@ -25,53 +24,32 @@ USER_DELETED = "Doctor deleted."
 INVALID_CREDENTIALS = "Invalid credentials!"
 USER_LOGGED_OUT = "Doctor <id={doctor_id}> successfully logged out."
 
+
 class DoctorRegister(Resource):
     @classmethod
     def post(cls):
         _doctor_parser = reqparse.RequestParser()
-        _doctor_parser.add_argument(
-                "username", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("username", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "password", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("password", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "first_name", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("first_name", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "last_name", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("last_name", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "email", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("email", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "mobile", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("mobile", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "gender", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("gender", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "speciality", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("speciality", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "gender", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("gender", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "address", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("address", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "age", type=int, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("age", type=int, required=True, help=BLANK)
         data = _doctor_parser.parse_args()
         if DoctorModel.find_by_username(data["username"]):
             return {"message": DOCTOR_ALREADY_EXISTS}, 400
@@ -103,18 +81,18 @@ class DoctorLogin(Resource):
     def post(cls):
 
         _doctor_parser = reqparse.RequestParser()
-        _doctor_parser.add_argument(
-                "username", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("username", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument(
-                "password", type=str, required=True, help=BLANK
-            )
+        _doctor_parser.add_argument("password", type=str, required=True, help=BLANK)
         data = _doctor_parser.parse_args()
         doctor = DoctorModel.find_by_username(data["username"])
         if doctor and safe_str_cmp(doctor.password, data["password"]):
-            access_token = create_access_token(identity=doctor.id, fresh=True, user_claims={'type': 'doctor'})
-            refresh_token = create_refresh_token(identity=doctor.id, user_claims={'type': 'doctor'})
+            access_token = create_access_token(
+                identity=doctor.id, fresh=True, user_claims={"type": "doctor"}
+            )
+            refresh_token = create_refresh_token(
+                identity=doctor.id, user_claims={"type": "doctor"}
+            )
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
         return {"message": INVALID_CREDENTIALS}, 401
 

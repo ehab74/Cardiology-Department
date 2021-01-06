@@ -1,5 +1,6 @@
 from db import db
 
+
 class DoctorModel(db.Model):
     __tablename__ = "Doctors"
     id = db.Column(db.Integer, primary_key=True)
@@ -14,7 +15,19 @@ class DoctorModel(db.Model):
     mobile = db.Column(db.String(80))
     age = db.Column(db.Integer)
 
-    def __init__(self,username: str, password: str, first_name: str, last_name: str, email: str, gender: str, speciality: str, mobile: str, address: str, age: int ):
+    def __init__(
+        self,
+        username: str,
+        password: str,
+        first_name: str,
+        last_name: str,
+        email: str,
+        gender: str,
+        speciality: str,
+        mobile: str,
+        address: str,
+        age: int,
+    ):
         self.username = username
         self.password = password
         self.first_name = first_name
@@ -27,18 +40,19 @@ class DoctorModel(db.Model):
         self.age = age
 
     def json(self):
-        return {"id": self.id,
-         "username": self.username,
-         "password": self.password,
-         "first_name": self.first_name,
-         "last_name": self.last_name,
-         "email": self.email,
-         "gender": self.gender,
-         "speciality": self.speciality,
-         "mobile": self.mobile,
-         "address": self.address,
-         "age": self.age
-         }
+        return {
+            "id": self.id,
+            "username": self.username,
+            "password": self.password,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "gender": self.gender,
+            "speciality": self.speciality,
+            "mobile": self.mobile,
+            "address": self.address,
+            "age": self.age,
+        }
 
     def save_to_db(self):
         db.session.add(self)

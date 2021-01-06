@@ -3,11 +3,19 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 import mysql.connector
 
-from resources.doctor import DoctorRegister, Doctor, DoctorLogin, DoctorLogout, TokenRefresh
+from resources.doctor import (
+    DoctorRegister,
+    Doctor,
+    DoctorLogin,
+    DoctorLogout,
+    TokenRefresh,
+)
 from blacklist import BLACKLIST
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+app.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = "mysql+mysqlconnector://root:12345@localhost:3306/databaseproject"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 app.config["JWT_BLACKLIST_ENABLED"] = True
@@ -20,7 +28,10 @@ api = Api(app)
 def create_tables():
     db.create_all()
 
+
 jwt = JWTManager(app)
+
+
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
     if (
@@ -85,7 +96,8 @@ def revoked_token_callback():
         401,
     )
 
-#Resources
+
+# Resources
 api.add_resource(DoctorRegister, "/doctor_register")
 api.add_resource(Doctor, "/doctor/<int:doctor_id>")
 api.add_resource(DoctorLogin, "/doctor_login")
@@ -96,4 +108,4 @@ if __name__ == "__main__":
     from db import db
 
     db.init_app(app)
-    app.run(port=5000, debug=True)
+    app.run(host="localhost", port=5000, debug=True)
