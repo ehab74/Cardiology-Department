@@ -60,11 +60,14 @@ class PatientRegister(Resource):
 
 class Patient(Resource):
     @classmethod
+    @jwt_required
     def get(cls, patient_id):
-        patient = PatientModel.find_by_id(patient_id)
-        if patient:
-            return patient.json()
-        return {"message": "User not found"}, 404
+        if get_jwt_claims()["type"] == "admin" or get_jwt_claims()["type"] == "doctor":
+            patient = PatientModel.find_by_id(patient_id)
+            if patient:
+                return patient.json()
+            return {"message": "User not found"}, 404
+        return {'message': 'You have to be a doctor or an admin'}
 
     @classmethod
     @jwt_required
