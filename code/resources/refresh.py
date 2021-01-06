@@ -9,6 +9,7 @@ from flask_jwt_extended import (
     get_jwt_claims,
 )
 
+
 class TokenRefresh(Resource):
     @classmethod
     @jwt_refresh_token_required
