@@ -1,15 +1,26 @@
 from flask import Flask, jsonify
 from flask_restful import Api
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, get_raw_jwt
 import mysql.connector
 import pymysql
-
-from resources.doctor import DoctorRegister, Doctor, DoctorLogin, DoctorLogout, TokenRefresh
-from resources.patient import Patient,PatientLogin,PatientRegister,pTokenRefresh,PatientLogout
 from blacklist import BLACKLIST
 
-pymysql.install_as_MySQLdb()
+from resources.doctor import (
+    DoctorRegister,
+    Doctor,
+    DoctorLogin,
+    DoctorLogout
+)
+from resources.patient import (
+    PatientRegister,
+    Patient,
+    PatientLogin,
+    PatientLogout
+)
+from resources.refresh import TokenRefresh
 
+
+pymysql.install_as_MySQLdb()
 app = Flask(__name__)       
 app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://root:mysql@localhost/cardio'#"sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -31,16 +42,20 @@ def create_tables():
        engine.execute("CREATE DATABASE {}".format(database))
     db.create_all()
 
+
 jwt = JWTManager(app)
 
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
+    user_claims= get_raw_jwt()['user_claims']
     if (
-        identity == 1
-    ):  # Instead of hard-coding, you should read from a config file or a database
-        return {"is admin": True}
-    return {"is admin": False}
-
+        user_claims['type'] == 'doctor'
+    ):  
+        return {"type": 'doctor'}
+    elif user_claims['type'] == 'patient':
+        return {'type': 'patient'}
+    else:
+        pass
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
@@ -97,20 +112,21 @@ def revoked_token_callback():
         401,
     )
 
-#Resources
-api.add_resource(DoctorRegister, "/doctor_register")
+
+# Resources
+api.add_resource(DoctorRegister, "/doctor/register")
 api.add_resource(Doctor, "/doctor/<int:doctor_id>")
-api.add_resource(DoctorLogin, "/doctor_login")
-api.add_resource(DoctorLogout, "/doctor_logout")
-api.add_resource(TokenRefresh, "/doctor_refresh")
+api.add_resource(DoctorLogin, "/doctor/login")
+api.add_resource(DoctorLogout, "/doctor/logout")
+api.add_resource(TokenRefresh, "/refresh")
 api.add_resource(PatientRegister, '/patient/reg')
 api.add_resource(Patient, '/patient/<int:patient_id>')
 api.add_resource(PatientLogin, '/patient/login')
-api.add_resource(pTokenRefresh, '/patient/refresh')
+#api.add_resource(TokenRefresh, '/patient/refresh')
 api.add_resource(PatientLogout, '/patient/logout')
 
 if __name__ == "__main__":
     from db import db
 
     db.init_app(app)
-    app.run(port=5000, debug=True)
+    app.run(host="localhost", port=5000, debug=True)
