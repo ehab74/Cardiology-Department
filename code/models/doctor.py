@@ -10,7 +10,6 @@ class DoctorModel(db.Model):
     last_name = db.Column(db.String(80))
     email = db.Column(db.String(80), unique=True)
     gender = db.Column(db.String(80))
-    speciality = db.Column(db.String(80))
     address = db.Column(db.String(80))
     mobile = db.Column(db.String(80))
     age = db.Column(db.Integer)
@@ -23,7 +22,6 @@ class DoctorModel(db.Model):
         last_name: str,
         email: str,
         gender: str,
-        speciality: str,
         mobile: str,
         address: str,
         age: int,
@@ -34,7 +32,6 @@ class DoctorModel(db.Model):
         self.last_name = last_name
         self.email = email
         self.gender = gender
-        self.speciality = speciality
         self.mobile = mobile
         self.address = address
         self.age = age
@@ -48,7 +45,6 @@ class DoctorModel(db.Model):
             "last_name": self.last_name,
             "email": self.email,
             "gender": self.gender,
-            "speciality": self.speciality,
             "mobile": self.mobile,
             "address": self.address,
             "age": self.age,

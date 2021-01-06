@@ -43,8 +43,6 @@ class DoctorRegister(Resource):
 
         _doctor_parser.add_argument("gender", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument("speciality", type=str, required=True, help=BLANK)
-
         _doctor_parser.add_argument("gender", type=str, required=True, help=BLANK)
 
         _doctor_parser.add_argument("address", type=str, required=True, help=BLANK)
