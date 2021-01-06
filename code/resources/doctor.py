@@ -112,6 +112,12 @@ class DoctorLogout(Resource):
         doctor_id = get_jwt_identity()
         return {"message": USER_LOGGED_OUT.format(doctor_id=doctor_id)}
 
+class DoctorList(Resource):
+    @classmethod
+    def get(cls):
+        doctors = [doctor.json() for doctor in DoctorModel.find_all()]
+        return {"doctors": doctors}, 200
+
 
 # class TokenRefresh(Resource):
 #     @classmethod
