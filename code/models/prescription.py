@@ -16,7 +16,7 @@ class PrescriptionModel(db.Model):
         self.doctor_name = doctor_name
     def json(self):
         return{
-            "id": self.id,
+            "_id": self.id,
             "patient_id": self.patient_id,
             "text": self.text,
             "doctor_name": self.doctor_name,
