@@ -73,4 +73,4 @@ class DoctorModel(db.Model):
     
     @classmethod
     def find_all(cls):
-        return cls.query.all()
+        return cls.query.with_entities(cls.first_name, cls.last_name, cls.mobile, cls.age).all()

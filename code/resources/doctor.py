@@ -115,8 +115,16 @@ class DoctorLogout(Resource):
 class DoctorList(Resource):
     @classmethod
     def get(cls):
-        doctors = [doctor.json() for doctor in DoctorModel.find_all()]
-        return {"doctors": doctors}, 200
+        doctors = DoctorModel.find_all()
+        doctors_list = []
+        for doctor in doctors:
+            doctors_list.append({'first_name': doctor[0],
+            'last_name': doctor[1],
+            'mobile': doctor[2],
+            'age': doctor[3]
+            })
+
+        return doctors_list, 200
 
 
 # class TokenRefresh(Resource):
