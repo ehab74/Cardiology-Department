@@ -13,6 +13,7 @@ from models.patient import PatientModel
 from blacklist import BLACKLIST
 
 
+
 class PatientRegister(Resource):
     patient_parser = reqparse.RequestParser()   
     patient_parser.add_argument(
@@ -45,6 +46,8 @@ class PatientRegister(Resource):
 
     def post(self):
         data = PatientRegister.patient_parser.parse_args()
+
+
         if data['age'] <= 0:
             return {'message': 'Age must be greater than 0'}
 

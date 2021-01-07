@@ -11,20 +11,21 @@ from resources.doctor import (
     DoctorRegister,
     Doctor,
     DoctorLogin,
-    DoctorLogout
+    DoctorLogout,
+    DoctorList
 )
 from resources.patient import (
     PatientRegister,
     Patient,
     PatientLogin,
-    PatientLogout
+    PatientLogout,
+    PatientList
 )
 from resources.appointment import appointment,deleteAppointments
 from resources.refresh import TokenRefresh
 from resources.admin import AdminRegister, AdmingLogin, AdminLogout
 from resources.prescription import PrescriptionRegister, Prescription, PrescriptionList
 
-pymysql.install_as_MySQLdb()
 
 # pymysql.install_as_MySQLdb()
 app = Flask(__name__)
