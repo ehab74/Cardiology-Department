@@ -124,7 +124,7 @@ class DoctorList(Resource):
             'last_name': doctor[1],
             'mobile': doctor[2],
             'age': doctor[3],
-            'id': doctor[4]
+            '_id': doctor[4]
             })
 
         return doctors_list, 200
