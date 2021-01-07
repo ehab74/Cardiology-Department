@@ -1,11 +1,12 @@
 from db import db
+from werkzeug.security import generate_password_hash
 
 
 class DoctorModel(db.Model):
     __tablename__ = "Doctors"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
-    password = db.Column(db.String(80))
+    password = db.Column(db.String(128))
     first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))
     email = db.Column(db.String(80), unique=True)
@@ -31,7 +32,7 @@ class DoctorModel(db.Model):
         age: int,
     ):
         self.username = username
-        self.password = password
+        self.password = generate_password_hash(password)
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
@@ -42,9 +43,8 @@ class DoctorModel(db.Model):
 
     def json(self):
         return {
-            "id": self.id,
+            "_id": self.id,
             "username": self.username,
-            "password": self.password,
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
@@ -76,5 +76,4 @@ class DoctorModel(db.Model):
 
     @classmethod
     def find_all(cls):
-        return cls.query.with_entities(cls.address,cls.username).all()      
-   
+        return cls.query.with_entities(cls.first_name, cls.last_name, cls.mobile, cls.age, cls.id).all()

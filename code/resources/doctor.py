@@ -1,7 +1,7 @@
 from flask import jsonify
 from flask_restful import Resource, reqparse
 from models.doctor import DoctorModel
-from werkzeug.security import safe_str_cmp
+from werkzeug.security import check_password_hash
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -48,12 +48,14 @@ class DoctorRegister(Resource):
 
         _doctor_parser.add_argument("age", type=int, required=True, help=BLANK)
         data = _doctor_parser.parse_args()
+        if data['age'] <= 0:
+            return {'message': 'Age must be greater than 0'}, 400
         if DoctorModel.find_by_username(data["username"]):
             return {"message": DOCTOR_ALREADY_EXISTS}, 400
-        
+
         if DoctorModel.find_by_email(data["email"]):
             return {"message": DOCTOR_ALREADY_EXISTS2}, 400
-    
+
         user = DoctorModel(**data)
         user.save_to_db()
 
@@ -69,12 +71,15 @@ class Doctor(Resource):
         return user.json()
 
     @classmethod
+    @jwt_required
     def delete(cls, doctor_id: int):
-        doctor = DoctorModel.find_by_id(doctor_id)
-        if not doctor:
-            return {"message": USER_NOT_FOUND}, 404
-        doctor.delete_from_db()
-        return {"message": USER_DELETED}
+        if get_jwt_claims()["type"] == "admin":
+            doctor = DoctorModel.find_by_id(doctor_id)
+            if not doctor:
+                return {"message": USER_NOT_FOUND}, 404
+            doctor.delete_from_db()
+            return {"message": USER_DELETED}
+        return {"message": "Admin authorization required."}
 
 
 class DoctorLogin(Resource):
@@ -87,7 +92,7 @@ class DoctorLogin(Resource):
         _doctor_parser.add_argument("password", type=str, required=True, help=BLANK)
         data = _doctor_parser.parse_args()
         doctor = DoctorModel.find_by_username(data["username"])
-        if doctor and safe_str_cmp(doctor.password, data["password"]):
+        if doctor and check_password_hash(doctor.password, data["password"]):
             access_token = create_access_token(
                 identity=doctor.id, fresh=True, user_claims={"type": "doctor"}
             )
@@ -106,6 +111,21 @@ class DoctorLogout(Resource):
         BLACKLIST.add(jti)
         doctor_id = get_jwt_identity()
         return {"message": USER_LOGGED_OUT.format(doctor_id=doctor_id)}
+
+class DoctorList(Resource):
+    @classmethod
+    def get(cls):
+        doctors = DoctorModel.find_all()
+        doctors_list = []
+        for doctor in doctors:
+            doctors_list.append({'first_name': doctor[0],
+            'last_name': doctor[1],
+            'mobile': doctor[2],
+            'age': doctor[3],
+            '_id': doctor[4]
+            })
+
+        return doctors_list, 200
 
 
 # class TokenRefresh(Resource):

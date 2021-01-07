@@ -1,32 +1,46 @@
 from db import db
+from werkzeug.security import generate_password_hash
 
-class PatientModel (db.Model):
+
+class PatientModel(db.Model):
     __tablename__ = "Patients"
 
-    id = db.Column(db.Integer,primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))
-    email = db.Column(db.String(80),unique = True)
+    email = db.Column(db.String(80), unique=True)
     mobile = db.Column(db.String(80))
     address = db.Column(db.String(80))
     gender = db.Column(db.String(80))
     age = db.Column(db.Integer)
-    username = db.Column(db.String(80),unique = True)
-    password = db.Column(db.String(80))
+    username = db.Column(db.String(80), unique=True)
+    password = db.Column(db.String(128))
+    prescriptions = db.relationship("PrescriptionModel", lazy="dynamic")
 
     appointments = db.relationship('appointmentModel',lazy = 'dynamic')
    
-
-    def __init__(self,first_name,last_name,email,mobile,gender,age,username,password,address):
+    def __init__(
+        self,
+        first_name,
+        last_name,
+        email,
+        mobile,
+        gender,
+        age,
+        username,
+        password,
+        address,
+    ):
         self.first_name = first_name
-        self.last_name=last_name
-        self.email= email
+        self.last_name = last_name
+        self.email = email
         self.mobile = mobile
         self.gender = gender
         self.age = age
         self.username = username
-        self.password = password
+        self.password = generate_password_hash(password)
         self.address = address
+        
 
     def json(self):
         return {
@@ -37,16 +51,16 @@ class PatientModel (db.Model):
         "gender": self.gender,
         "age":self.age,
         "username":self.username,
+        "prescriptions": [Prescriptions.json() for item in self.items.all()],
         'appointments': [appointment.json() for appointment in self.appointments.all()]
-        } 
-      
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
 
     def delete_from_db(self):
         db.session.delete(self)
-        db.session.commit()    
+        db.session.commit()
 
     @classmethod
     def find_by_id(cls, _id):
@@ -58,5 +72,8 @@ class PatientModel (db.Model):
 
     @classmethod
     def find_by_email(cls, email):
-        return cls.query.filter_by(email=email).first()    
-
+        return cls.query.filter_by(email=email).first()
+    
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
