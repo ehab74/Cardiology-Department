@@ -116,7 +116,7 @@ def revoked_token_callback():
 
 # Resources
 api.add_resource(DoctorRegister, "/doctor/register")
-api.add_resource(Doctor, "/doctor/?id=<int:doctor_id>")
+api.add_resource(Doctor, "/doctor/<int:doctor_id>")
 api.add_resource(DoctorLogin, "/doctor/login")
 api.add_resource(DoctorLogout, "/doctor/logout")
 api.add_resource(DoctorList, "/doctors")
