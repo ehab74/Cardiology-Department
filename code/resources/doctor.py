@@ -49,9 +49,27 @@ class DoctorRegister(Resource):
         _doctor_parser.add_argument("address", type=str, required=True, help=BLANK)
 
         _doctor_parser.add_argument("age", type=int, required=True, help=BLANK)
+
         data = _doctor_parser.parse_args()
-        if data['age'] <= 0:
-            return {'message': 'Age must be greater than 0'}, 400
+        if (
+            data["username"].isspace()
+            or data["password"].isspace()
+            or data["age"].isspace()
+            or data["gender"].isspace()
+            or data["address"].isspace()
+            or data["mobile"].isspace()
+            or data["email"].isspace()
+            or data["first_name"].isspace()
+            or data["last_name"].isspace()
+        ):
+            return {'message': 'One of the inputs is empty'},400
+
+        if len(data['username']) <5:
+            return {'message' : 'Username is too short'},400
+
+        if data["age"] <= 0:
+            return {"message": "Age must be greater than 0"}, 400
+
         if DoctorModel.find_by_username(data["username"]):
             return {"message": DOCTOR_ALREADY_EXISTS}, 400
 
@@ -114,18 +132,22 @@ class DoctorLogout(Resource):
         doctor_id = get_jwt_identity()
         return {"message": USER_LOGGED_OUT.format(doctor_id=doctor_id)}
 
+
 class DoctorList(Resource):
     @classmethod
     def get(cls):
         doctors = DoctorModel.find_all()
         doctors_list = []
         for doctor in doctors:
-            doctors_list.append({'first_name': doctor[0],
-            'last_name': doctor[1],
-            'mobile': doctor[2],
-            'age': doctor[3],
-            '_id': doctor[4]
-            })
+            doctors_list.append(
+                {
+                    "first_name": doctor[0],
+                    "last_name": doctor[1],
+                    "mobile": doctor[2],
+                    "age": doctor[3],
+                    "_id": doctor[4],
+                }
+            )
 
         return doctors_list, 200
 
@@ -148,7 +170,3 @@ class DoctorPatient(Resource):
 #         current_user = get_jwt_identity()
 #         new_token = create_access_token(identity=current_user, fresh=False)
 #         return {"access_token": new_token}, 200
-
- 
-
-

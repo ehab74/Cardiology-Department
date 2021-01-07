@@ -13,110 +13,90 @@ from flask_jwt_extended import (
     get_jwt_claims,
 )
 
+
 class appointment(Resource):
     appointment_parser = reqparse.RequestParser()
-    appointment_parser.add_argument('doctor_id',
-                          type=int,
-                          required=True,
-                          help="This field cannot be blank."
-                          )
-    appointment_parser.add_argument('patient_id',
-                          type=int, 
-                          required=False
-                          )
-    appointment_parser.add_argument('date',
-                          type=str,
-                          required=True,
-                          help="This field cannot be blank."
-                          )
+    appointment_parser.add_argument(
+        "doctor_id", type=int, required=True, help="This field cannot be blank."
+    )
+    appointment_parser.add_argument("patient_id", type=int, required=False)
+    appointment_parser.add_argument(
+        "date", type=str, required=True, help="This field cannot be blank."
+    )
 
-    @jwt_required                      
+    @jwt_required
     @classmethod
     def post(cls):
-       claims = get_jwt_claims()
-       if claims['type']=='doctor':
-           return {'message':'Access denied'}
+        claims = get_jwt_claims()
+        if claims["type"] == "doctor":
+            return {"message": "Access denied"}
 
-       identity = get_jwt_identity()    
-       data = cls.appointment_parser.parse_args()
-       data['patient_id'] = identity
+        identity = get_jwt_identity()
+        data = cls.appointment_parser.parse_args()
+        if data["doctor_id"].isspace() or data["date"].isspace():
+            return {'message': 'One of the inputs is empty'},400
 
-       doctor = DoctorModel.find_by_id(data['doctor_id']) 
-       if not doctor:
-           return {'message':'Doctor not found'},404
+        data["patient_id"] = identity
 
-       data['current_time'] = datetime.now().strftime("%d/%m/%Y")    
-       d1,m1,y1 = [int(x)for x in data['date'].split('/') ]
-       d2,m2,y2 = [int(x)for x in data['current_time'].split('/') ]
+        doctor = DoctorModel.find_by_id(data["doctor_id"])
+        if not doctor:
+            return {"message": "Doctor not found"}, 404
 
-       appdate = datetime(d1,m1,y1)
-       current_date = datetime(d2,m2,y2)
+        data["current_time"] = datetime.now().strftime("%d/%m/%Y")
+        d1, m1, y1 = [int(x) for x in data["date"].split("/")]
+        d2, m2, y2 = [int(x) for x in data["current_time"].split("/")]
 
-       if (appdate<current_date):
-           return {'message':'Invalid date'}         
+        appdate = datetime(d1, m1, y1)
+        current_date = datetime(d2, m2, y2)
 
-       appointment = appointmentModel(**data)
-       appointment.save_to_db()
-       return {"message": "Appointment created successfully."}, 201
+        if appdate < current_date:
+            return {"message": "Invalid date"}
 
-    @classmethod
-    @jwt_required   
-    def get(cls):
-      identity = get_jwt_identity()
-      claims = get_jwt_claims()
-
-      if claims['type']=='doctor':
-        doctor_appointments = DoctorModel.find_by_id(identity).appointments
-
-        doctorapp = []
-        for appointment in doctor_appointments:
-          doctorapp.append(appointment.json())
-        return doctorapp
-
-      elif claims['type']=='patient':
-        patient_appointments = PatientModel.find_by_id(identity).appointments
-
-        patientapp = []
-        for appointment in patient_appointments:
-           patientapp.append(appointment.json())
-        return patientapp
-
-      else:
-        patents = appointmentModel.find_all()
-        patientapp = []
-        for appointment in patients:
-           patientapp.append(appointment.json())
-
-        return patientapp   
-
-
-class deleteAppointments(Resource):
+        appointment = appointmentModel(**data)
+        appointment.save_to_db()
+        return {"message": "Appointment created successfully."}, 201
 
     @classmethod
     @jwt_required
-    def delete(cls,app_id):
-      claims = get_jwt_claims()
-      if claims['type']!='admin':
-         return {'message':'access denied'}
+    def get(cls):
+        identity = get_jwt_identity()
+        claims = get_jwt_claims()
 
-      app = appointmetModel.find_by_id(app_id)
-      if not app:
-        return {"message": 'Appointment not found'}, 404
-      app.delete_from_db()
-      return {"message": 'Appointment deleted'}            
+        if claims["type"] == "doctor":
+            doctor_appointments = DoctorModel.find_by_id(identity).appointments
+
+            doctorapp = []
+            for appointment in doctor_appointments:
+                doctorapp.append(appointment.json())
+            return doctorapp
+
+        elif claims["type"] == "patient":
+            patient_appointments = PatientModel.find_by_id(identity).appointments
+
+            patientapp = []
+            for appointment in patient_appointments:
+                patientapp.append(appointment.json())
+            return patientapp
+
+        else:
+            patents = appointmentModel.find_all()
+            patientapp = []
+            for appointment in patients:
+                patientapp.append(appointment.json())
+
+            return patientapp
 
 
+class deleteAppointments(Resource):
+    @classmethod
+    @jwt_required
+    def delete(cls, app_id):
+        claims = get_jwt_claims()
+        if claims["type"] != "admin":
+            return {"message": "access denied"}
 
-
-      
-
-
-
-
-
-
-
-
-
-
-
+        app = appointmetModel.find_by_id(app_id)
+        if not app:
+            return {"message": "Appointment not found"}, 404
+        app.delete_from_db()
+        return {"message": "Appointment deleted"}

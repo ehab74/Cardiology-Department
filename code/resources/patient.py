@@ -13,9 +13,8 @@ from models.patient import PatientModel
 from blacklist import BLACKLIST
 
 
-
 class PatientRegister(Resource):
-    patient_parser = reqparse.RequestParser()   
+    patient_parser = reqparse.RequestParser()
     patient_parser.add_argument(
         "username", type=str, required=True, help="This field cannot be blank."
     )
@@ -47,9 +46,24 @@ class PatientRegister(Resource):
     def post(self):
         data = PatientRegister.patient_parser.parse_args()
 
+        if (
+            data["username"].isspace()
+            or data["password"].isspace()
+            or data["age"].isspace()
+            or data["gender"].isspace()
+            or data["address"].isspace()
+            or data["mobile"].isspace()
+            or data["email"].isspace()
+            or data["first_name"].isspace()
+            or data["last_name"].isspace()
+        ):
+            return {'message': 'One of the inputs is empty'},400
 
-        if data['age'] <= 0:
-            return {'message': 'Age must be greater than 0'}
+        if len(data['username']) <5:
+            return {'message' : 'Username is too short'},400
+
+        if data["age"] <= 0:
+            return {"message": "Age must be greater than 0"}
 
         if PatientModel.find_by_username(data["username"]):
             return {"message": "A user with that username already exists"}, 400
@@ -72,7 +86,7 @@ class Patient(Resource):
             if patient:
                 return patient.json()
             return {"message": "User not found"}, 404
-        return {'message': 'You have to be a doctor or an admin'}
+        return {"message": "You have to be a doctor or an admin"}
 
     @classmethod
     @jwt_required
@@ -128,6 +142,7 @@ class PatientLogout(Resource):
         BLACKLIST.add(jti)
         return {"message": "Sucessfully logged out"}, 200
 
+
 class PatientList(Resource):
     @classmethod
     @jwt_required
@@ -136,5 +151,4 @@ class PatientList(Resource):
             patients = PatientModel.find_all()
             patients_list = [patient.json() for patient in patients]
             return patients_list, 200
-        return {'message': 'Authorization required.'}
-
+        return {"message": "Authorization required."}
