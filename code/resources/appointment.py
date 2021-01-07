@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.appointment import appointmentModel
+from datetime import datetime
 from models.doctor import DoctorModel
 from models.patient import PatientModel
 from flask_jwt_extended import (

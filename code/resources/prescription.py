@@ -33,7 +33,7 @@ class Prescription(Resource):
             return prescription.json()
         return {'message': 'prescription with that id does not exist'}, 404
 
-class PrescriptionList(Resource):
+class PatientPrescriptionList(Resource):
     @classmethod
     @jwt_required
     def get (cls):
@@ -41,6 +41,15 @@ class PrescriptionList(Resource):
         prescriptions = PrescriptionModel.query.filter_by(patient_id=identity).all()
         prescription_list = [prescription.json() for prescription in prescriptions]
         return prescription_list, 200
-            
+
+class PrescriptionsList(Resource):
+    @classmethod
+    @jwt_required
+    def get (cls):
+        if get_jwt_claims()['type'] == 'admin':
+            prescriptions = PrescriptionModel.query.all()
+            Prescription_list = [prescription.json() for prescription in prescriptions]
+            return Prescription_list
+        return {'message': 'Admin authorization required'}
 
 
