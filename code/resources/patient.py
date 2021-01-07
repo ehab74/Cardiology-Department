@@ -147,7 +147,7 @@ class PatientList(Resource):
     @classmethod
     @jwt_required
     def get(cls):
-        if get_jwt_claims()["type"] == "admin" or get_jwt_claims()["tpye"] == "doctor":
+        if get_jwt_claims()['type'] == 'admin':
             patients = PatientModel.find_all()
             patients_list = [patient.json() for patient in patients]
             return patients_list, 200

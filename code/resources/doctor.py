@@ -1,6 +1,8 @@
 from flask import jsonify
 from flask_restful import Resource, reqparse
 from models.doctor import DoctorModel
+from models.patient import PatientModel
+from models.examination import ExaminationModel
 from werkzeug.security import check_password_hash
 from flask_jwt_extended import (
     create_access_token,
@@ -148,6 +150,17 @@ class DoctorList(Resource):
             )
 
         return doctors_list, 200
+
+class DoctorPatient(Resource):
+    @classmethod
+    @jwt_required
+    def get(cls):
+        if get_jwt_claims()['type'] == 'doctor':
+            identity = get_jwt_identity()
+            patients = ExaminationModel.find_by_examinations(identity)
+            return patients, 200
+        return {'message': 'You must have a doctor authorization.'}
+
 
 
 # class TokenRefresh(Resource):

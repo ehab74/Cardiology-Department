@@ -1,5 +1,7 @@
 from db import db
 from werkzeug.security import generate_password_hash
+from models.doctor import DoctorModel
+from models.examination import ExaminationModel
 
 
 class PatientModel(db.Model):
@@ -16,7 +18,7 @@ class PatientModel(db.Model):
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))
     prescriptions = db.relationship("PrescriptionModel", lazy="dynamic")
-
+    examinations = db.relationship("ExaminationModel", lazy="dynamic")
     appointments = db.relationship('appointmentModel',lazy = 'dynamic')
    
     def __init__(
@@ -44,6 +46,7 @@ class PatientModel(db.Model):
 
     def json(self):
         return {
+        "id": self.id,
         "first_name":self.first_name,
         "last_name": self.last_name,
         "email": self.email,
@@ -51,8 +54,9 @@ class PatientModel(db.Model):
         "gender": self.gender,
         "age":self.age,
         "username":self.username,
-        "prescriptions": [Prescriptions.json() for item in self.items.all()],
-        'appointments': [appointment.json() for appointment in self.appointments.all()]}
+        "prescriptions": [Prescriptions.json() for prescription in self.prescriptions.all()],
+        'appointments': [appointment.json() for appointment in self.appointments.all()],
+        'examinations': [examination.json() for examination in self.examinations.all()]}
 
     def save_to_db(self):
         db.session.add(self)
@@ -77,3 +81,4 @@ class PatientModel(db.Model):
     @classmethod
     def find_all(cls):
         return cls.query.all()
+
