@@ -17,6 +17,7 @@ BLANK = "This field cannot be left blank."
 INVALID_CREDENTIALS = "Invalid Credintials"
 USER_LOGGED_OUT = "Logged out successfully"
 
+
 class AdminRegister(Resource):
     @classmethod
     def post(cls):
@@ -26,8 +27,20 @@ class AdminRegister(Resource):
         _admin_parser_.add_argument("first_name", type=str, required=True, help=BLANK)
         _admin_parser_.add_argument("last_name", type=str, required=True, help=BLANK)
         data = _admin_parser_.parse_args()
+        if (
+            data["username"].isspace()
+            or data["password"].isspace()
+            or data["first_name"].isspace()
+            or data["last_name"].isspace()
+        ):
+            return {'message': 'One of the inputs is empty'},400
+
+        if len(data['username']) <5:
+            return {'message' : 'Username is too short'},400
+
         if AdminModel.find_by_username(data["username"]):
             return {"message": "This admin already exists"}
+
         admin = AdminModel(**data)
         admin.save_to_db()
         return {"message": "Admin created successfully."}
@@ -51,6 +64,7 @@ class AdmingLogin(Resource):
             )
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
         return {"message": INVALID_CREDENTIALS}, 401
+
 
 class AdminLogout(Resource):
     @classmethod
