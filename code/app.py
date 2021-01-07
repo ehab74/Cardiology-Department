@@ -7,13 +7,24 @@ import mysql.connector
 # import pymysql
 from blacklist import BLACKLIST
 
-from resources.doctor import DoctorRegister, Doctor, DoctorLogin, DoctorLogout, DoctorList
-from resources.patient import PatientRegister, Patient, PatientLogin, PatientLogout, PatientList
+from resources.doctor import (
+    DoctorRegister,
+    Doctor,
+    DoctorLogin,
+    DoctorLogout
+)
+from resources.patient import (
+    PatientRegister,
+    Patient,
+    PatientLogin,
+    PatientLogout
+)
+from resources.appointment import appointment,deleteAppointments
+from resources.refresh import TokenRefresh
 from resources.admin import AdminRegister, AdmingLogin, AdminLogout
 from resources.prescription import PrescriptionRegister, Prescription, PrescriptionList
-from resources.refresh import TokenRefresh
 
-
+pymysql.install_as_MySQLdb()
 
 # pymysql.install_as_MySQLdb()
 app = Flask(__name__)
@@ -121,11 +132,14 @@ api.add_resource(DoctorLogin, "/doctor/login")
 api.add_resource(DoctorLogout, "/doctor/logout")
 api.add_resource(DoctorList, "/doctors")
 api.add_resource(TokenRefresh, "/refresh")
-api.add_resource(PatientRegister, "/patient/reg")
-api.add_resource(Patient, "/patient/<int:patient_id>")
-api.add_resource(PatientLogin, "/patient/login")
+api.add_resource(PatientRegister, '/patient/register')
+api.add_resource(Patient, '/patient/<int:patient_id>')
+api.add_resource(PatientLogin, '/patient/login')
+#api.add_resource(TokenRefresh, '/patient/refresh')
+api.add_resource(PatientLogout, '/patient/logout')
+api.add_resource(appointment, '/appointments')
+api.add_resource(deleteAppointments,'/deleteAppointments:<int:app_id>')
 api.add_resource(PatientList, "/patients")
-api.add_resource(PatientLogout, "/patient/logout")
 api.add_resource(AdminRegister, "/admin/register")
 api.add_resource(AdmingLogin, "/admin/login")
 api.add_resource(AdminLogout, "/admin/logout")

@@ -17,6 +17,8 @@ class PatientModel(db.Model):
     password = db.Column(db.String(128))
     prescriptions = db.relationship("PrescriptionModel", lazy="dynamic")
 
+    appointments = db.relationship('appointmentModel',lazy = 'dynamic')
+   
     def __init__(
         self,
         first_name,
@@ -42,16 +44,15 @@ class PatientModel(db.Model):
 
     def json(self):
         return {
-            "_id": self.id,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "email": self.email,
-            "mobile": self.mobile,
-            "gender": self.gender,
-            "age": self.age,
-            "username": self.username,
-            "prescriptions": [Prescriptions.json() for item in self.items.all()]
-        }
+        "first_name":self.first_name,
+        "last_name": self.last_name,
+        "email": self.email,
+        "mobile": self.mobile,
+        "gender": self.gender,
+        "age":self.age,
+        "username":self.username,
+        "prescriptions": [Prescriptions.json() for item in self.items.all()],
+        'appointments': [appointment.json() for appointment in self.appointments.all()]
 
     def save_to_db(self):
         db.session.add(self)

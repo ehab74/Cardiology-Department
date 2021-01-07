@@ -44,8 +44,6 @@ class DoctorRegister(Resource):
 
         _doctor_parser.add_argument("gender", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument("gender", type=str, required=True, help=BLANK)
-
         _doctor_parser.add_argument("address", type=str, required=True, help=BLANK)
 
         _doctor_parser.add_argument("age", type=int, required=True, help=BLANK)
@@ -137,3 +135,7 @@ class DoctorList(Resource):
 #         current_user = get_jwt_identity()
 #         new_token = create_access_token(identity=current_user, fresh=False)
 #         return {"access_token": new_token}, 200
+
+ 
+
+

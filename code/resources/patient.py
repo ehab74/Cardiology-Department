@@ -14,7 +14,7 @@ from blacklist import BLACKLIST
 
 
 class PatientRegister(Resource):
-    patient_parser = reqparse.RequestParser()
+    patient_parser = reqparse.RequestParser()   
     patient_parser.add_argument(
         "username", type=str, required=True, help="This field cannot be blank."
     )
