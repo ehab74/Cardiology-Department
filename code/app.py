@@ -10,7 +10,9 @@ from blacklist import BLACKLIST
 from resources.doctor import DoctorRegister, Doctor, DoctorLogin, DoctorLogout, DoctorList
 from resources.patient import PatientRegister, Patient, PatientLogin, PatientLogout
 from resources.admin import AdminRegister, AdmingLogin
+from resources.prescription import PrescriptionRegister, Prescription, PrescriptionList
 from resources.refresh import TokenRefresh
+
 
 
 # pymysql.install_as_MySQLdb()
@@ -126,6 +128,9 @@ api.add_resource(PatientLogout, "/patient/logout")
 api.add_resource(AdminRegister, "/admin/register")
 api.add_resource(AdmingLogin, "/admin/login")
 api.add_resource(DoctorList, "/doctors")
+api.add_resource(PrescriptionRegister, "/add_prescription")
+api.add_resource(Prescription, "/prescription/<int:prescription_id>")
+api.add_resource(PrescriptionList, "/patient/prescriptions")
 if __name__ == "__main__":
     from db import db
 

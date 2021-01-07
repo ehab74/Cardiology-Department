@@ -15,6 +15,7 @@ class PatientModel(db.Model):
     age = db.Column(db.Integer)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))
+    prescriptions = db.relationship("PrescriptionModel", lazy="dynamic")
 
     def __init__(
         self,
@@ -37,6 +38,7 @@ class PatientModel(db.Model):
         self.username = username
         self.password = generate_password_hash(password)
         self.address = address
+        
 
     def json(self):
         return {
@@ -47,6 +49,7 @@ class PatientModel(db.Model):
             "gender": self.gender,
             "age": self.age,
             "username": self.username,
+            "prescriptions": [prescro.json() for item in self.items.all()]
         }
 
     def save_to_db(self):
