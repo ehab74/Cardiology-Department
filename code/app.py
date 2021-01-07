@@ -15,7 +15,7 @@ from resources.refresh import TokenRefresh
 
 # pymysql.install_as_MySQLdb()
 app = Flask(__name__)
-# app(CORS)
+CORS(app)
 app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = "mysql+mysqlconnector://root:mysql@localhost/cardio"  # "sqlite:///data.db"
