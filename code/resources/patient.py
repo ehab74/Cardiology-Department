@@ -45,6 +45,8 @@ class PatientRegister(Resource):
 
     def post(self):
         data = PatientRegister.patient_parser.parse_args()
+        if data['age'] <= 0:
+            return {'message': 'Age must be greater than 0'}
 
         if PatientModel.find_by_username(data["username"]):
             return {"message": "A user with that username already exists"}, 400

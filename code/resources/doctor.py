@@ -50,6 +50,8 @@ class DoctorRegister(Resource):
 
         _doctor_parser.add_argument("age", type=int, required=True, help=BLANK)
         data = _doctor_parser.parse_args()
+        if data['age'] <= 0:
+            return {'message': 'Age must be greater than 0'}, 400
         if DoctorModel.find_by_username(data["username"]):
             return {"message": DOCTOR_ALREADY_EXISTS}, 400
 
