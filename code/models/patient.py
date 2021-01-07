@@ -46,7 +46,7 @@ class PatientModel(db.Model):
 
     def json(self):
         return {
-        "id": self.id
+        "id": self.id,
         "first_name":self.first_name,
         "last_name": self.last_name,
         "email": self.email,
