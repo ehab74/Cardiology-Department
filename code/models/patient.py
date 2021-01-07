@@ -14,6 +14,9 @@ class PatientModel (db.Model):
     username = db.Column(db.String(80),unique = True)
     password = db.Column(db.String(80))
 
+    appointments = db.relationship('appointmentModel',lazy = 'dynamic')
+   
+
     def __init__(self,first_name,last_name,email,mobile,gender,age,username,password,address):
         self.first_name = first_name
         self.last_name=last_name
@@ -33,7 +36,8 @@ class PatientModel (db.Model):
         "mobile": self.mobile,
         "gender": self.gender,
         "age":self.age,
-        "username":self.username
+        "username":self.username,
+        'appointments': [appointment.json() for appointment in self.appointments.all()]
         } 
       
     def save_to_db(self):

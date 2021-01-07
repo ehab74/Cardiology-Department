@@ -14,6 +14,10 @@ class DoctorModel(db.Model):
     mobile = db.Column(db.String(80))
     age = db.Column(db.Integer)
 
+    appointment = db.relationship('appointmentModel',lazy = 'dynamic')
+    
+
+
     def __init__(
         self,
         username: str,
@@ -65,7 +69,12 @@ class DoctorModel(db.Model):
     @classmethod
     def find_by_id(cls, _id: int):
         return cls.query.filter_by(id=_id).first()
-        
+
     @classmethod
     def find_by_email(cls, email):
-        return cls.query.filter_by(email=email).first()    
+        return cls.query.filter_by(email=email).first()
+
+    @classmethod
+    def find_all(cls):
+        return cls.query.with_entities(cls.address,cls.username).all()      
+   

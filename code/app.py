@@ -17,10 +17,12 @@ from resources.patient import (
     PatientLogin,
     PatientLogout
 )
+from resources.appointment import appointment,deleteAppointments
 from resources.refresh import TokenRefresh
 
 
 pymysql.install_as_MySQLdb()
+
 app = Flask(__name__)       
 app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://root:mysql@localhost/cardio'#"sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -124,6 +126,9 @@ api.add_resource(Patient, '/patient/<int:patient_id>')
 api.add_resource(PatientLogin, '/patient/login')
 #api.add_resource(TokenRefresh, '/patient/refresh')
 api.add_resource(PatientLogout, '/patient/logout')
+api.add_resource(appointment, '/appointments')
+api.add_resource(deleteAppointments,'/deleteAppointments:<int:app_id>')
+
 
 if __name__ == "__main__":
     from db import db

@@ -20,7 +20,7 @@ class PatientRegister(Resource):
                           help="This field cannot be blank."
                           )
     patient_parser.add_argument('password',
-                          type=str,
+                          type=str, 
                           required=True,
                           help="This field cannot be blank."
                           )
