@@ -14,11 +14,11 @@ class appointmentModel(db.Model):
     doctor = db.relationship('DoctorModel') 
     patient = db.relationship('PatientModel')
 
-    def __init__ (self,date,doctor_id,patient_id):
+    def __init__ (self,date,doctor_id,patient_id,current_date):
         self.date = date
         self.doctor_id = doctor_id
         self.patient_id = patient_id
-        #self.current_date = datetime.now().strftime("%d/%m/%Y")
+        self.current_date = current_date
 
     def json (self):
         return {
@@ -44,10 +44,7 @@ class appointmentModel(db.Model):
     def find_all(cls):
         apps = cls.query().all()
 
-        patientsapp = []
-        for app in apps:
-          patientapp.append(app)
-
+        patientsapp = [app.json() for app in apps]
         return patientsapp          
 
 

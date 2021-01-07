@@ -11,8 +11,6 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_jwt_claims,
 )
-
-
 class appointment(Resource):
     appointment_parser = reqparse.RequestParser()
     appointment_parser.add_argument(
@@ -41,12 +39,12 @@ class appointment(Resource):
         if not doctor:
             return {"message": "Doctor not found"}, 404
 
-        data["current_time"] = datetime.now().strftime("%d/%m/%Y")
-        d1, m1, y1 = [int(x) for x in data["date"].split("/")]
-        d2, m2, y2 = [int(x) for x in data["current_time"].split("/")]
+        data["current_time"] = datetime.now().strftime("%Y-%m-%d")
+        y1, m1, d1 = [int(x) for x in data["date"].split("-")]
+        y2, m2, d2 = [int(x) for x in data["current_time"].split("-")]
 
-        appdate = datetime(d1, m1, y1)
-        current_date = datetime(d2, m2, y2)
+        appdate = datetime(y1, m1, d1)
+        current_date = datetime(y2, m2, d2)
 
         if appdate < current_date:
             return {"message": "Invalid date"}
