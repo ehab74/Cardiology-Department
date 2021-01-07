@@ -52,7 +52,7 @@ class PatientModel(db.Model):
         "age":self.age,
         "username":self.username,
         "prescriptions": [Prescriptions.json() for item in self.items.all()],
-        'appointments': [appointment.json() for appointment in self.appointments.all()]
+        'appointments': [appointment.json() for appointment in self.appointments.all()]}
 
     def save_to_db(self):
         db.session.add(self)

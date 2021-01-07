@@ -15,7 +15,7 @@ class DoctorModel(db.Model):
     mobile = db.Column(db.String(80))
     age = db.Column(db.Integer)
 
-    appointment = db.relationship('appointmentModel',lazy = 'dynamic')
+    appointments = db.relationship('appointmentModel',lazy = 'dynamic')
     
 
 
@@ -52,6 +52,8 @@ class DoctorModel(db.Model):
             "mobile": self.mobile,
             "address": self.address,
             "age": self.age,
+            'appointments': [appointment.json() for appointment in self.appointments.all()]
+
         }
 
     def save_to_db(self):
