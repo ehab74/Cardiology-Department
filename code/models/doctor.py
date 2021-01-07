@@ -41,7 +41,7 @@ class DoctorModel(db.Model):
         return {
             "id": self.id,
             "username": self.username,
-            "password": self.password,
+
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
@@ -73,4 +73,4 @@ class DoctorModel(db.Model):
     
     @classmethod
     def find_all(cls):
-        return cls.query.with_entities(cls.first_name, cls.last_name, cls.mobile, cls.age).all()
+        return cls.query.with_entities(cls.first_name, cls.last_name, cls.mobile, cls.age, cls.id).all()

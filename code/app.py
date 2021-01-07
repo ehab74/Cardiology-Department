@@ -8,8 +8,8 @@ import mysql.connector
 from blacklist import BLACKLIST
 
 from resources.doctor import DoctorRegister, Doctor, DoctorLogin, DoctorLogout, DoctorList
-from resources.patient import PatientRegister, Patient, PatientLogin, PatientLogout
-from resources.admin import AdminRegister, AdmingLogin
+from resources.patient import PatientRegister, Patient, PatientLogin, PatientLogout, PatientList
+from resources.admin import AdminRegister, AdmingLogin, AdminLogout
 from resources.prescription import PrescriptionRegister, Prescription, PrescriptionList
 from resources.refresh import TokenRefresh
 
@@ -119,18 +119,21 @@ api.add_resource(DoctorRegister, "/doctor/register")
 api.add_resource(Doctor, "/doctor/<int:doctor_id>")
 api.add_resource(DoctorLogin, "/doctor/login")
 api.add_resource(DoctorLogout, "/doctor/logout")
+api.add_resource(DoctorList, "/doctors")
 api.add_resource(TokenRefresh, "/refresh")
 api.add_resource(PatientRegister, "/patient/reg")
 api.add_resource(Patient, "/patient/<int:patient_id>")
 api.add_resource(PatientLogin, "/patient/login")
-# api.add_resource(TokenRefresh, '/patient/refresh')
+api.add_resource(PatientList, "/patients")
 api.add_resource(PatientLogout, "/patient/logout")
 api.add_resource(AdminRegister, "/admin/register")
 api.add_resource(AdmingLogin, "/admin/login")
-api.add_resource(DoctorList, "/doctors")
+api.add_resource(AdminLogout, "/admin/logout")
 api.add_resource(PrescriptionRegister, "/add_prescription")
 api.add_resource(Prescription, "/prescription/<int:prescription_id>")
 api.add_resource(PrescriptionList, "/patient/prescriptions")
+
+
 if __name__ == "__main__":
     from db import db
 

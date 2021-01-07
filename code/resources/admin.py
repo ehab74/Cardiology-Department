@@ -14,7 +14,8 @@ from flask_jwt_extended import (
 from blacklist import BLACKLIST
 
 BLANK = "This field cannot be left blank."
-
+INVALID_CREDENTIALS = "Invalid Credintials"
+USER_LOGGED_OUT = "Logged out successfully"
 
 class AdminRegister(Resource):
     @classmethod
@@ -50,3 +51,12 @@ class AdmingLogin(Resource):
             )
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
         return {"message": INVALID_CREDENTIALS}, 401
+
+class AdminLogout(Resource):
+    @classmethod
+    @jwt_required
+    def post(cls):
+        jti = get_raw_jwt()["jti"]  # jti is "JWT ID", a unique identifier for a JWT.
+        BLACKLIST.add(jti)
+        admin_id = get_jwt_identity()
+        return {"message": USER_LOGGED_OUT.format(admin_id=admin_id)}

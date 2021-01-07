@@ -121,7 +121,8 @@ class DoctorList(Resource):
             doctors_list.append({'first_name': doctor[0],
             'last_name': doctor[1],
             'mobile': doctor[2],
-            'age': doctor[3]
+            'age': doctor[3],
+            'id': doctor[4]
             })
 
         return doctors_list, 200

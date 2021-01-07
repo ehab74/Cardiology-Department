@@ -42,6 +42,7 @@ class PatientModel(db.Model):
 
     def json(self):
         return {
+            "id": self.id,
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
@@ -49,7 +50,7 @@ class PatientModel(db.Model):
             "gender": self.gender,
             "age": self.age,
             "username": self.username,
-            "prescriptions": [prescro.json() for item in self.items.all()]
+            "prescriptions": [Prescriptions.json() for item in self.items.all()]
         }
 
     def save_to_db(self):
@@ -71,3 +72,7 @@ class PatientModel(db.Model):
     @classmethod
     def find_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
+    
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()

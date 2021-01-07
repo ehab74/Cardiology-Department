@@ -122,3 +122,14 @@ class PatientLogout(Resource):
         jti = get_raw_jwt()["jti"]  # jti is a "JWT ID", a unique identifier for a JWT
         BLACKLIST.add(jti)
         return {"message": "Sucessfully logged out"}, 200
+
+class PatientList(Resource):
+    @classmethod
+    @jwt_required
+    def get(cls):
+        if get_jwt_claims()['type'] == 'admin' or get_jwt_claims()['tpye'] == 'doctor':
+            patients = PatientModel.find_all()
+            patients_list = [patient.json() for patient in patients]
+            return patients_list, 200
+        return {'message': 'Authorization required.'}
+
