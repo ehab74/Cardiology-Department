@@ -26,8 +26,7 @@ class ExaminationRegister(Resource):
         data = cls.examination_parser.parse_args()
         if (
             data["diagnosis"].isspace()
-            or data["patient_name"].isspace()
-            or data["doctor_name"].isspace()
+            or data["prescription"].isspace()
             ):
             return {'message': 'One of the inputs is empty'},400
         if get_jwt_claims()['type'] == "doctor":
