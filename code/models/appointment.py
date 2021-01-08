@@ -99,18 +99,18 @@ class AppointmentModel(db.Model):
 
     #  service.events().insert(calendarId='primary', body=event).execute()
 
-    def calendar (start_time,email):
+    # def calendar (start_time,email):
 
-        calendar = GoogleCalendar('ehab.wahba98@eng-st.cu.edu.eg')
+    #     calendar = GoogleCalendar('ehab.wahba98@eng-st.cu.edu.eg')
 
-        event = Event(
-         'The Glass Menagerie',
-          start=start_time,
-          location='Africa/Cairo',
-          minutes_before_popup_reminder=15
-         )
+    #     event = Event(
+    #      'The Glass Menagerie',
+    #       start=start_time,
+    #       location='Africa/Cairo',
+    #       minutes_before_popup_reminder=15
+    #      )
 
-        calendar.add_event(event)
+    #     calendar.add_event(event)
 
 
 
