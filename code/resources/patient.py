@@ -11,7 +11,7 @@ from flask_jwt_extended import (
 )
 from models.patient import PatientModel
 from blacklist import BLACKLIST
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 
 
 class PatientRegister(Resource):
@@ -40,7 +40,9 @@ class PatientRegister(Resource):
     patient_parser.add_argument(
         "address", type=str, required=True, help="This field cannot be blank."
     )
-    patient_parser.add_argument("birthdate", type=str, required=True, help="This field cannot be blank")
+    patient_parser.add_argument(
+        "birthdate", type=str, required=True, help="This field cannot be blank"
+    )
 
     def post(self):
         data = PatientRegister.patient_parser.parse_args()
@@ -54,10 +56,10 @@ class PatientRegister(Resource):
             or data["first_name"].isspace()
             or data["last_name"].isspace()
         ):
-            return {'message': 'One of the inputs is empty'},400
+            return {"message": "One of the inputs is empty"}, 400
 
-        if len(data['username']) <5:
-            return {'message' : 'Username is too short'},400
+        if len(data["username"]) < 5:
+            return {"message": "Username is too short"}, 400
 
         if PatientModel.find_by_username(data["username"]):
             return {"message": "A user with that username already exists"}, 400
@@ -65,9 +67,11 @@ class PatientRegister(Resource):
         if PatientModel.find_by_email(data["email"]):
             return {"message": "A user with that email already exists"}, 400
 
-        data['gender'] = int(data['gender'])
-        if data['gender'] != 0 and data['gender'] != 1:
-            return {'message': "Invalid request: gender is only '0' if male or '1' if female"}    
+        data["gender"] = int(data["gender"])
+        if data["gender"] != 0 and data["gender"] != 1:
+            return {
+                "message": "Invalid request: gender is only '0' if male or '1' if female"
+            }
 
         patient = PatientModel(**data)
         patient.save_to_db()
@@ -84,7 +88,7 @@ class Patient(Resource):
             if patient:
                 return patient.json_with_appointments()
             return {"message": "User not found"}, 404
-        return {"message": "You have to be a doctor or an admin"}
+        return {"message": "You have to be an admin"}
 
     @classmethod
     @jwt_required
@@ -116,7 +120,10 @@ class PatientLogin(Resource):
 
         if patient and check_password_hash(patient.password, data["password"]):
             access_token = create_access_token(
-                identity=patient.id, fresh=True, user_claims={"type": "patient"},expires_delta=timedelta(1)
+                identity=patient.id,
+                fresh=True,
+                user_claims={"type": "patient"},
+                expires_delta=timedelta(1),
             )
             refresh_token = create_refresh_token(
                 identity=patient.id, user_claims={"type": "patient"}
@@ -145,9 +152,8 @@ class PatientList(Resource):
     @classmethod
     @jwt_required
     def get(cls):
-        if get_jwt_claims()['type'] == 'admin':
+        if get_jwt_claims()["type"] == "admin":
             patients = PatientModel.find_all()
             patients_list = [patient.json() for patient in patients]
             return patients_list, 200
         return {"message": "Authorization required."}
-        

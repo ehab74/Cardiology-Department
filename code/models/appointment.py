@@ -16,7 +16,7 @@ class AppointmentModel(db.Model):
     created_at = db.Column(db.DateTime)
     description = db.Column(db.String(5000))
 
-    doctor_id = db.Column(db.Integer, db.ForeignKey("Doctors.id"), nullable=False)
+    doctor_id = db.Column(db.Integer, db.ForeignKey("Doctors.id",ondelete = 'SET NULL') )
     patient_id = db.Column(db.Integer, db.ForeignKey("Patients.id"), nullable=False)
 
     doctor = db.relationship("DoctorModel")

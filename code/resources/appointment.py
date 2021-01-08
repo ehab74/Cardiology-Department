@@ -13,6 +13,7 @@ from flask_jwt_extended import (
     get_jwt_claims,
 )
 
+
 class appointment(Resource):
     appointment_parser = reqparse.RequestParser()
     appointment_parser.add_argument(
@@ -37,11 +38,11 @@ class appointment(Resource):
         identity = get_jwt_identity()
 
         if data["date"].isspace():
-            return {'message': 'One of the inputs is empty'},400
+            return {"message": "One of the inputs is empty"}, 400
 
         data["patient_id"] = identity
 
-        data['doctor_id'] = int(data['doctor_id'])
+        data["doctor_id"] = int(data["doctor_id"])
 
         doctor = DoctorModel.find_by_id(data["doctor_id"])
         if not doctor:
@@ -50,21 +51,20 @@ class appointment(Resource):
         data["created_at"] = datetime.now().strftime("%Y-%m-%d")
         y2, m2, d2 = [int(x) for x in data["created_at"].split("-")]
         y1, m1, d1 = [int(x) for x in data["date"].split("-")]
-        
-        app_date = datetime(y1,m1,d1)
-        app_dateTime = datetime(y1, m1, d1,21,30,0)
-        created_at = datetime(y2, m2, d2)
 
+        app_date = datetime(y1, m1, d1)
+        app_dateTime = datetime(y1, m1, d1, 21, 30, 0)
+        created_at = datetime(y2, m2, d2)
 
         if app_date < created_at:
             return {"message": "Invalid date"}
 
         apps_date = AppointmentModel.find_by_date(app_date)
 
-        if apps_date and apps_date.patient_id==identity:
-            return {"message":"Appointment already exists at the same date"} 
+        if apps_date and apps_date.patient_id == identity:
+            return {"message": "Appointment already exists at the same date"}
 
-        #AppointmentModel.main(app_date)    
+        # AppointmentModel.main(app_date)
         appointment = AppointmentModel(**data)
         appointment.save_to_db()
 
@@ -78,7 +78,7 @@ class appointment(Resource):
 
         if claims["type"] == "doctor":
             doctor_appointments = DoctorModel.find_by_id(identity).appointments
-            
+
             doctorapp = [appointment.json() for appointment in doctor_appointments]
             return doctorapp, 200
 

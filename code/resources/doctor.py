@@ -14,7 +14,7 @@ from flask_jwt_extended import (
     get_jwt_claims,
 )
 from blacklist import BLACKLIST
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 
 BLANK = "This field cannot be left blank."
 
@@ -53,9 +53,11 @@ class DoctorRegister(Resource):
 
         data = _doctor_parser.parse_args()
 
-        data['gender'] = int(data['gender'])
-        if data['gender'] != 0 and data['gender'] != 1:
-            return {'message': "Invalid request: gender is only '0' if male or '1' if female"}
+        data["gender"] = int(data["gender"])
+        if data["gender"] != 0 and data["gender"] != 1:
+            return {
+                "message": "Invalid request: gender is only '0' if male or '1' if female"
+            }
         if (
             data["username"].isspace()
             or data["password"].isspace()
@@ -65,11 +67,10 @@ class DoctorRegister(Resource):
             or data["first_name"].isspace()
             or data["last_name"].isspace()
         ):
-            return {'message': 'One of the inputs is empty'},400
+            return {"message": "One of the inputs is empty"}, 400
 
-        if len(data['username']) <5:
-            return {'message' : 'Username is too short'},400
-
+        if len(data["username"]) < 5:
+            return {"message": "Username is too short"}, 400
 
         if DoctorModel.find_by_username(data["username"]):
             return {"message": DOCTOR_ALREADY_EXISTS}, 400
@@ -115,10 +116,13 @@ class DoctorLogin(Resource):
         data = _doctor_parser.parse_args()
 
         doctor = DoctorModel.find_by_username(data["username"])
-        
+
         if doctor and check_password_hash(doctor.password, data["password"]):
             access_token = create_access_token(
-                identity=doctor.id, fresh=True, user_claims={"type": "doctor"}, expires_delta=timedelta(1)
+                identity=doctor.id,
+                fresh=True,
+                user_claims={"type": "doctor"},
+                expires_delta=timedelta(1),
             )
             refresh_token = create_refresh_token(
                 identity=doctor.id, user_claims={"type": "doctor"}
@@ -144,18 +148,18 @@ class DoctorList(Resource):
         doctors_list = [doctor.json() for doctor in doctors]
         return doctors_list, 200
 
+
 class DoctorPatient(Resource):
     @classmethod
     @jwt_required
     def get(cls):
-        if get_jwt_claims()['type'] != 'doctor':
-            return {'message': 'You must be a doctor'}
+        if get_jwt_claims()["type"] != "doctor":
+            return {"message": "You must be a doctor"}
 
         identity = get_jwt_identity()
         results = PatientModel.find_by_doctor(identity)
         result_list = [result.json() for result in results]
         return result_list, 200
-
 
 
 # class TokenRefresh(Resource):

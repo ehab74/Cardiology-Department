@@ -11,7 +11,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_jwt_claims,
 )
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 from blacklist import BLACKLIST
 
 BLANK = "This field cannot be left blank."
@@ -34,10 +34,10 @@ class AdminRegister(Resource):
             or data["first_name"].isspace()
             or data["last_name"].isspace()
         ):
-            return {'message': 'One of the inputs is empty'},400
+            return {"message": "One of the inputs is empty"}, 400
 
-        if len(data['username']) <5:
-            return {'message' : 'Username is too short'},400
+        if len(data["username"]) < 5:
+            return {"message": "Username is too short"}, 400
 
         if AdminModel.find_by_username(data["username"]):
             return {"message": "This admin already exists"}
@@ -58,7 +58,10 @@ class AdmingLogin(Resource):
         admin = AdminModel.find_by_username(data["username"])
         if admin and check_password_hash(admin.password, data["password"]):
             access_token = create_access_token(
-                identity=admin.id, fresh=True, user_claims={"type": "admin"},expires_delta=timedelta(1)
+                identity=admin.id,
+                fresh=True,
+                user_claims={"type": "admin"},
+                expires_delta=timedelta(1),
             )
             refresh_token = create_refresh_token(
                 identity=admin.id, user_claims={"type": "admin"}

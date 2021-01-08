@@ -1,6 +1,7 @@
 from db import db
 from werkzeug.security import generate_password_hash
 from datetime import datetime
+import ondelete
 
 
 class DoctorModel(db.Model):
@@ -43,19 +44,19 @@ class DoctorModel(db.Model):
     def json(self):
         return {
             "_id": self.id,
-            "username": self.username,
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
-            "gender": "male" if self.gender == 0 else "female",
             "mobile": self.mobile,
-            "address": self.address,
+            "gender": "male" if self.gender == 0 else "female",
             "birthdate": str(self.birthdate),
-            "age": (datetime.now() - self.birthdate).days // 365
+            "age": (datetime.now() - self.birthdate).days // 365,
+            "username": self.username,
+            "address":self.address
             # 'appointments': [appointment.json() for appointment in self.appointments.all()],
         }
 
-    def json_with_appointments(self):
+    def json_with_examinations(self):
         return {
             "_id": self.id,
             "first_name": self.first_name,
