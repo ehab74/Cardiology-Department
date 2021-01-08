@@ -22,7 +22,6 @@ class PrescriptionRegister(Resource):
             data = PrescriptionRegister._prescription_parser.parse_args()
             if (
             data["text"].isspace()
-            or data["patient_id"].isspace()
             or data["patient_name"].isspace()
             or data["doctor_name"].isspace()
             ):

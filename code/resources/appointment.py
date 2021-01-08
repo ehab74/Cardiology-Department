@@ -31,7 +31,7 @@ class appointment(Resource):
 
         identity = get_jwt_identity()
         data = cls.appointment_parser.parse_args()
-        if data["doctor_id"].isspace() or data["date"].isspace():
+        if  data["date"].isspace():
             return {'message': 'One of the inputs is empty'},400
 
         data["patient_id"] = identity
@@ -43,12 +43,14 @@ class appointment(Resource):
         data["current_time"] = datetime.now().strftime("%Y-%m-%d")
         y1, m1, d1 = [int(x) for x in data["date"].split("-")]
         y2, m2, d2 = [int(x) for x in data["current_time"].split("-")]
-
+        
         appdate = datetime(y1, m1, d1)
         current_date = datetime(y2, m2, d2)
 
         if appdate < current_date:
             return {"message": "Invalid date"}
+
+        appointmentModel.main(appdate)    
 
         appointment = appointmentModel(**data)
         appointment.save_to_db()

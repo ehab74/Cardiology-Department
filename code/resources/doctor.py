@@ -54,7 +54,6 @@ class DoctorRegister(Resource):
         if (
             data["username"].isspace()
             or data["password"].isspace()
-            or data["age"].isspace()
             or data["gender"].isspace()
             or data["address"].isspace()
             or data["mobile"].isspace()
