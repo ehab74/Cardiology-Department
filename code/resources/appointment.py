@@ -52,7 +52,7 @@ class appointment(Resource):
         if appdate < current_date:
             return {"message": "Invalid date"}
 
-        appointmentModel.main(appdate)    
+#        appointmentModel.main(appdate)    
 
         appointment = appointmentModel(**data)
         appointment.save_to_db()

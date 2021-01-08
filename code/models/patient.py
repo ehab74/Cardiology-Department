@@ -62,6 +62,19 @@ class PatientModel(db.Model):
         "username":self.username,
         # 'appointments': [appointment.json() for appointment in self.appointments.all()],
         }
+    def json_with_appointments(self):
+        return {
+        "_id": self.id,
+        "first_name":self.first_name,
+        "last_name": self.last_name,
+        "email": self.email,
+        "mobile": self.mobile,
+        "gender": 'male' if self.gender == 0 else 'female',
+        "birthdate":str(self.birthdate),
+        "age": (datetime.now() - self.birthdate).days//365,
+        "username":self.username,
+        'appointments': [appointment.json() for appointment in self.appointments]
+        }
 
     def save_to_db(self):
         db.session.add(self)
@@ -72,8 +85,9 @@ class PatientModel(db.Model):
         db.session.commit()
 
     @classmethod
-    def find_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+    def find_by_id(PatientModel, patient_id):
+        patientAppointments = PatientModel.query.filter(PatientModel.id == patient_id).join(appointmentModel, PatientModel.id == appointmentModel.patient_id).first()
+        return patientAppointments
 
     @classmethod
     def find_by_username(cls, username):

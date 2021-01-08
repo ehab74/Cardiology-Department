@@ -45,13 +45,16 @@ class DoctorRegister(Resource):
 
         _doctor_parser.add_argument("mobile", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument("gender", type=int, required=True, help=BLANK)
+        _doctor_parser.add_argument("gender", type=str, required=True, help=BLANK)
 
         _doctor_parser.add_argument("address", type=str, required=True, help=BLANK)
 
         _doctor_parser.add_argument("birthdate", type=str, required=True, help=BLANK)
 
         data = _doctor_parser.parse_args()
+        data['gender'] = int(data['gender'])
+        if data['gender'] != 0 and data['gender'] != 1:
+            return {'message': "Invalid request: gender is only '0' if male or '1' if female"}
         if (
             data["username"].isspace()
             or data["password"].isspace()

@@ -31,7 +31,7 @@ class PatientRegister(Resource):
         "email", type=str, required=True, help="This field cannot be blank."
     )
     patient_parser.add_argument(
-        "gender", type=int, required=True, help="This field cannot be blank."
+        "gender", type=str, required=True, help="This field cannot be blank."
     )
     patient_parser.add_argument(
         "mobile", type=str, required=True, help="This field cannot be blank."
@@ -74,10 +74,10 @@ class Patient(Resource):
     @classmethod
     @jwt_required
     def get(cls, patient_id):
-        if get_jwt_claims()["type"] == "admin" or get_jwt_claims()["type"] == "doctor":
+        if get_jwt_claims()["type"] == "admin":
             patient = PatientModel.find_by_id(patient_id)
             if patient:
-                return patient.json()
+                return patient.json_with_appointments()
             return {"message": "User not found"}, 404
         return {"message": "You have to be a doctor or an admin"}
 
@@ -145,3 +145,4 @@ class PatientList(Resource):
             patients_list = [patient.json() for patient in patients]
             return patients_list, 200
         return {"message": "Authorization required."}
+        
