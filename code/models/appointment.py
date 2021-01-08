@@ -21,7 +21,7 @@ class appointmentModel(db.Model):
 
     def json (self):
         return {
-            'id': self.id,
+            '_id': self.id,
             'date' : self.date,
             'patient username': self.patient_id,
             'doctor username': self.doctor_id,

@@ -24,7 +24,7 @@ class ExaminationModel(db.Model):
 
     def json(self):
         return{
-            "id": self.id,
+            "_id": self.id,
             "patient_id": self.patient_id,
             "doctor_id": self.doctor_id,
             "check_in_date": self.check_in_date,
