@@ -15,14 +15,13 @@ from flask_jwt_extended import (
 class appointment(Resource):
     appointment_parser = reqparse.RequestParser()
     appointment_parser.add_argument(
-        "doctor_id", type=int, required=True, help="This field cannot be blank."
+        "doctor_id", type=str, required=True, help="This field cannot be blank."
     )
     appointment_parser.add_argument("patient_id", type=int, required=False)
     appointment_parser.add_argument(
         "date", type=str, required=True, help="This field cannot be blank."
     )
 
-    
     @classmethod
     @jwt_required
     def post(cls):
@@ -30,20 +29,23 @@ class appointment(Resource):
         if claims["type"] == "doctor":
             return {"message": "Access denied"}
 
-        identity = get_jwt_identity()
         data = cls.appointment_parser.parse_args()
+        identity = get_jwt_identity()
+
         if data["date"].isspace():
             return {'message': 'One of the inputs is empty'},400
 
         data["patient_id"] = identity
+
+        data['doctor_id'] = int(data['doctor_id'])
 
         doctor = DoctorModel.find_by_id(data["doctor_id"])
         if not doctor:
             return {"message": "Doctor not found"}, 404
 
         data["created_at"] = datetime.now().strftime("%Y-%m-%d")
-        y1, m1, d1 = [int(x) for x in data["date"].split("-")]
         y2, m2, d2 = [int(x) for x in data["created_at"].split("-")]
+        y1, m1, d1 = [int(x) for x in data["date"].split("-")]
 
         appdate = datetime(y1, m1, d1)
         current_date = datetime(y2, m2, d2)

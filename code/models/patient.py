@@ -6,9 +6,11 @@ from models.appointment import appointmentModel
 from sqlalchemy import Enum
 from datetime import datetime
 
+
 class GenderEnum(Enum):
     male = 0
     female = 1
+
 
 class PatientModel(db.Model):
     __tablename__ = "Patients"
@@ -23,9 +25,9 @@ class PatientModel(db.Model):
     birthdate = db.Column(db.DateTime)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))
-    
-    appointments = db.relationship('appointmentModel')
-   
+
+    appointments = db.relationship("appointmentModel")
+
     def __init__(
         self,
         first_name,
@@ -47,33 +49,33 @@ class PatientModel(db.Model):
         self.username = username
         self.password = generate_password_hash(password)
         self.address = address
-        
 
     def json(self):
         return {
-        "_id": self.id,
-        "first_name":self.first_name,
-        "last_name": self.last_name,
-        "email": self.email,
-        "mobile": self.mobile,
-        "gender": 'male' if self.gender == 0 else 'female',
-        "birthdate":str(self.birthdate),
-        "age": (datetime.now() - self.birthdate).days//365,
-        "username":self.username,
-        # 'appointments': [appointment.json() for appointment in self.appointments.all()],
+            "_id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "mobile": self.mobile,
+            "gender": "male" if self.gender == 0 else "female",
+            "birthdate": str(self.birthdate),
+            "age": (datetime.now() - self.birthdate).days // 365,
+            "username": self.username,
+            # 'appointments': [appointment.json() for appointment in self.appointments.all()],
         }
+
     def json_with_appointments(self):
         return {
-        "_id": self.id,
-        "first_name":self.first_name,
-        "last_name": self.last_name,
-        "email": self.email,
-        "mobile": self.mobile,
-        "gender": 'male' if self.gender == 0 else 'female',
-        "birthdate":str(self.birthdate),
-        "age": (datetime.now() - self.birthdate).days//365,
-        "username":self.username,
-        'appointments': [appointment.json() for appointment in self.appointments]
+            "_id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "mobile": self.mobile,
+            "gender": "male" if self.gender == 0 else "female",
+            "birthdate": str(self.birthdate),
+            "age": (datetime.now() - self.birthdate).days // 365,
+            "username": self.username,
+            "appointments": [appointment.json() for appointment in self.appointments],
         }
 
     def save_to_db(self):
@@ -86,7 +88,11 @@ class PatientModel(db.Model):
 
     @classmethod
     def find_by_id(PatientModel, patient_id):
-        patientAppointments = PatientModel.query.filter(PatientModel.id == patient_id).join(appointmentModel, PatientModel.id == appointmentModel.patient_id).first()
+        patientAppointments = (
+            PatientModel.query.filter(PatientModel.id == patient_id)
+            .join(appointmentModel, PatientModel.id == appointmentModel.patient_id)
+            .first()
+        )
         return patientAppointments
 
     @classmethod
@@ -96,12 +102,14 @@ class PatientModel(db.Model):
     @classmethod
     def find_by_email(cls, email):
         return cls.query.filter_by(email=email).first()
-    
+
     @classmethod
     def find_all(cls):
         return cls.query.all()
 
     @classmethod
     def find_by_doctor(PatientModel, doctor_id):
-        patientList = PatientModel.query.join(appointmentModel, PatientModel.id == appointmentModel.patient_id).filter(appointmentModel.doctor_id == doctor_id)
+        patientList = PatientModel.query.join(
+            appointmentModel, PatientModel.id == appointmentModel.patient_id
+        ).filter(appointmentModel.doctor_id == doctor_id)
         return patientList

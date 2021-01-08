@@ -2,6 +2,7 @@ from db import db
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 
+
 class DoctorModel(db.Model):
     __tablename__ = "Doctors"
     id = db.Column(db.Integer, primary_key=True)
@@ -15,8 +16,7 @@ class DoctorModel(db.Model):
     mobile = db.Column(db.String(80))
     birthdate = db.Column(db.DateTime)
 
-    appointments = db.relationship('appointmentModel')
-
+    appointments = db.relationship("appointmentModel")
 
     def __init__(
         self,
@@ -47,13 +47,27 @@ class DoctorModel(db.Model):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
-            "gender": 'male' if self.gender == 0 else 'female',
+            "gender": "male" if self.gender == 0 else "female",
             "mobile": self.mobile,
             "address": self.address,
             "birthdate": str(self.birthdate),
-            "age": (datetime.now() - self.birthdate).days//365,
+            "age": (datetime.now() - self.birthdate).days // 365,
             # 'appointments': [appointment.json() for appointment in self.appointments.all()],
         }
+
+    def json_with_appointments(self):
+        return {
+            "_id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "mobile": self.mobile,
+            "gender": "male" if self.gender == 0 else "female",
+            "birthdate": str(self.birthdate),
+            "age": (datetime.now() - self.birthdate).days // 365,
+            "username": self.username,
+            "appointments": [appointment.json() for appointment in self.appointments],
+        }    
 
     def save_to_db(self):
         db.session.add(self)
@@ -77,4 +91,8 @@ class DoctorModel(db.Model):
 
     @classmethod
     def find_all(cls):
-        return cls.query.all()
+        return cls.query.all()    
+
+    @classmethod
+    def find_all_with_appointments(cls):
+        return cls.query.join(appointmentModel,appointmentModel.doctor_id==cls.id).all()

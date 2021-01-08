@@ -11,6 +11,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_jwt_claims,
 )
+from datetime import datetime
 from blacklist import BLACKLIST
 
 BLANK = "This field cannot be left blank."
@@ -57,7 +58,7 @@ class AdmingLogin(Resource):
         admin = AdminModel.find_by_username(data["username"])
         if admin and check_password_hash(admin.password, data["password"]):
             access_token = create_access_token(
-                identity=admin.id, fresh=True, user_claims={"type": "admin"}
+                identity=admin.id, fresh=True, user_claims={"type": "admin"},expires_delta=datetime.timedelta(1)
             )
             refresh_token = create_refresh_token(
                 identity=admin.id, user_claims={"type": "admin"}

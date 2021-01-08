@@ -4,13 +4,17 @@ from models.doctor import DoctorModel as Doctor
 import models.patient as Patient
 from models.appointment import appointmentModel as Appointment
 
+
 class ExaminationModel(db.Model):
-    __tablename__ = 'Examinations'
+    __tablename__ = "Examinations"
 
     id = db.Column(db.Integer, primary_key=True)
-    appointment_id = db.Column(db.Integer, db.ForeignKey('Appointments.id'), nullable=False)
     diagnosis = db.Column(db.String(5000))
     prescription = db.Column(db.String(5000))
+
+    appointment_id = db.Column(
+        db.Integer, db.ForeignKey("Appointments.id"), nullable=False
+    )
 
     appointment = db.relationship("appointmentModel")
 
@@ -20,23 +24,23 @@ class ExaminationModel(db.Model):
         self.appointment_id = appointment_id
 
     def json(self):
-        return{
+        return {
             "_id": self.id,
             "diagnosis": self.diagnosis,
             "prescription": self.prescription,
-            "appointment_id": self.appointment_id
+            "appointment_id": self.appointment_id,
         }
-    
+
     def json_with_info(self):
-        return{
+        return {
             "_id": self.id,
             "diagnosis": self.diagnosis,
             "prescription": self.prescription,
             "appointment": {**self.appointment.json()},
             "patient": {**self.appointment.patient.json()},
-            "doctor": {**self.appointment.doctor.json()}
+            "doctor": {**self.appointment.doctor.json()},
         }
-    
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
@@ -48,16 +52,38 @@ class ExaminationModel(db.Model):
     @classmethod
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
-    
+
     @classmethod
     def find_by_id_with_info(cls, _id):
-        return cls.query.filter(cls.id == _id).join(Appointment, Appointment.id == cls.appointment_id).join(Patient.PatientModel, Patient.PatientModel.id == Appointment.patient_id).join(Doctor, Doctor.id == Appointment.doctor_id).first()
-    
+        return (
+            cls.query.filter(cls.id == _id)
+            .join(Appointment, Appointment.id == cls.appointment_id)
+            .join(
+                Patient.PatientModel, Patient.PatientModel.id == Appointment.patient_id
+            )
+            .join(Doctor, Doctor.id == Appointment.doctor_id)
+            .first()
+        )
+
     @classmethod
     def find_all_filtered(cls, patient_id):
-        return cls.query.join(Appointment, Appointment.id == cls.appointment_id).join(Patient.PatientModel, Patient.PatientModel.id == Appointment.patient_id).filter(Patient.PatientModel.id == patient_id).join(Doctor, Doctor.id == Appointment.doctor_id).all()
-    
-    
+        return (
+            cls.query.join(Appointment, Appointment.id == cls.appointment_id)
+            .join(
+                Patient.PatientModel, Patient.PatientModel.id == Appointment.patient_id
+            )
+            .filter(Patient.PatientModel.id == patient_id)
+            .join(Doctor, Doctor.id == Appointment.doctor_id)
+            .all()
+        )
+
     @classmethod
     def find_all(cls):
-        return cls.query.join(Appointment, Appointment.id == cls.appointment_id).join(Patient.PatientModel, Patient.PatientModel.id == Appointment.patient_id).join(Doctor, Doctor.id == Appointment.doctor_id).all()
+        return (
+            cls.query.join(Appointment, Appointment.id == cls.appointment_id)
+            .join(
+                Patient.PatientModel, Patient.PatientModel.id == Appointment.patient_id
+            )
+            .join(Doctor, Doctor.id == Appointment.doctor_id)
+            .all()
+        )
