@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from models.appointment import appointmentModel
+from models.appointment import AppointmentModel
 from datetime import datetime
 from models.doctor import DoctorModel
 from models.patient import PatientModel
@@ -46,18 +46,24 @@ class appointment(Resource):
         data["created_at"] = datetime.now().strftime("%Y-%m-%d")
         y2, m2, d2 = [int(x) for x in data["created_at"].split("-")]
         y1, m1, d1 = [int(x) for x in data["date"].split("-")]
+        
+        app_date = datetime(y1,m1,d1)
+        app_dateTime = datetime(y1, m1, d1,21,30,0)
+        created_at = datetime(y2, m2, d2)
 
-        appdate = datetime(y1, m1, d1)
-        current_date = datetime(y2, m2, d2)
 
-
-        if appdate < current_date:
+        if app_date < created_at:
             return {"message": "Invalid date"}
 
-#        appointmentModel.main(appdate)    
+        apps_date = AppointmentModel.find_by_date(app_date)
 
-        appointment = appointmentModel(**data)
+        if apps_date:
+            return {"message":"Appointment already exists at the same date"} 
+            
+        appointment = AppointmentModel(**data)
         appointment.save_to_db()
+
+        #AppointmentModel.calendar(app_dateTime,PatientModel.find_by_id(identity).email)
         return {"message": "Appointment created successfully."}, 201
 
     @classmethod
@@ -79,7 +85,7 @@ class appointment(Resource):
             return patientapp
 
         else:
-            appointments = appointmentModel.find_all()
+            appointments = AppointmentModel.find_all()
             appointments_list = [appointment.json() for appointment in appointments]
             return appointments_list, 200
 
@@ -92,7 +98,7 @@ class deleteAppointments(Resource):
         if claims["type"] != "admin":
             return {"message": "access denied"}
 
-        app = appointmentModel.find_by_id(app_id)
+        app = AppointmentModel.find_by_id(app_id)
         if not app:
             return {"message": "Appointment not found"}, 404
         app.delete_from_db()

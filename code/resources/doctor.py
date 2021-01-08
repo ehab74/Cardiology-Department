@@ -114,7 +114,7 @@ class DoctorLogin(Resource):
         doctor = DoctorModel.find_by_username(data["username"])
         if doctor and check_password_hash(doctor.password, data["password"]):
             access_token = create_access_token(
-                identity=doctor.id, fresh=True, user_claims={"type": "doctor"}, expires_delta=datetime.timedelta(1)
+                identity=doctor.id, fresh=True, user_claims={"type": "doctor"}, expires_delta=timedelta(1)
             )
             refresh_token = create_refresh_token(
                 identity=doctor.id, user_claims={"type": "doctor"}

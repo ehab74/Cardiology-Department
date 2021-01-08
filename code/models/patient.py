@@ -2,7 +2,7 @@ from db import db
 from werkzeug.security import generate_password_hash
 from models.doctor import DoctorModel
 from models.examination import ExaminationModel
-from models.appointment import appointmentModel
+from models.appointment import AppointmentModel
 from sqlalchemy import Enum
 from datetime import datetime
 
@@ -26,7 +26,7 @@ class PatientModel(db.Model):
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))
 
-    appointments = db.relationship("appointmentModel")
+    appointments = db.relationship("AppointmentModel")
 
     def __init__(
         self,
@@ -90,7 +90,7 @@ class PatientModel(db.Model):
     def find_by_id(PatientModel, patient_id):
         patientAppointments = (
             PatientModel.query.filter(PatientModel.id == patient_id)
-            .join(appointmentModel, PatientModel.id == appointmentModel.patient_id)
+            .join(AppointmentModel, PatientModel.id == AppointmentModel.patient_id)
             .first()
         )
         return patientAppointments
@@ -110,6 +110,6 @@ class PatientModel(db.Model):
     @classmethod
     def find_by_doctor(PatientModel, doctor_id):
         patientList = PatientModel.query.join(
-            appointmentModel, PatientModel.id == appointmentModel.patient_id
-        ).filter(appointmentModel.doctor_id == doctor_id)
+            AppointmentModel, PatientModel.id == AppointmentModel.patient_id
+        ).filter(AppointmentModel.doctor_id == doctor_id)
         return patientList

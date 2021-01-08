@@ -16,7 +16,7 @@ class DoctorModel(db.Model):
     mobile = db.Column(db.String(80))
     birthdate = db.Column(db.DateTime)
 
-    appointments = db.relationship("appointmentModel")
+    appointments = db.relationship("AppointmentModel")
 
     def __init__(
         self,
@@ -95,4 +95,4 @@ class DoctorModel(db.Model):
 
     @classmethod
     def find_all_with_appointments(cls):
-        return cls.query.join(appointmentModel,appointmentModel.doctor_id==cls.id).all()
+        return cls.query.join(AppointmentModel,AppointmentModel.doctor_id==cls.id).all()

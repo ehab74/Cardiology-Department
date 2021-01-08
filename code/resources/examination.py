@@ -1,10 +1,9 @@
 from models.examination import ExaminationModel
-from models.appointment import appointmentModel
+from models.appointment import AppointmentModel
 from flask_restful import Resource, reqparse
 from datetime import datetime
 from models.doctor import DoctorModel
 from models.patient import PatientModel
-from models.appointment import appointmentModel
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -30,7 +29,7 @@ class ExaminationRegister(Resource):
             ):
             return {'message': 'One of the inputs is empty'},400
         if get_jwt_claims()['type'] == "doctor":
-            appointment = appointmentModel.find_by_id(app_id)
+            appointment = AppointmentModel.find_by_id(app_id)
             if appointment:
                 examination = ExaminationModel(**data, appointment_id=app_id)
                 examination.save_to_db()

@@ -1,7 +1,14 @@
 from db import db
+from datetime import datetime,timedelta
+import pickle
+import os.path
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from gcsa.google_calendar import GoogleCalendar
+from gcsa.event import Event
 
-
-class appointmentModel(db.Model):
+class AppointmentModel(db.Model):
     __tablename__ = "Appointments"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -45,8 +52,12 @@ class appointmentModel(db.Model):
     def find_all(cls):
         return cls.query.all()
 
-    # def main(start_time):
+    @classmethod
+    def find_by_date(cls,date):
+        return cls.query.filter_by(date=date).all()    
 
+    # def main(start_time):
+    #  SCOPES = ['https://www.googleapis.com/auth/calendar']
     #  creds = None
 
     #  if os.path.exists('token.pickle'):
@@ -64,19 +75,19 @@ class appointmentModel(db.Model):
     #         pickle.dump(creds, token)
 
     #  service = build('calendar', 'v3', credentials=creds)
-
+    #  end_time = start_time + timedelta(hours = 4 ) 
     #  event = {
     #   'summary': 'Doctor Appointment',
     #   'location': 'Cairo',
     #   'description': '',
     #   'start': {
-    #   'dateTime': start_time,
+    #   'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
     #   'timeZone': 'Africa/Cairo',
     #    },
-    #  #'end': {
-    #  #'dateTime': end_time,
-    #  #'timeZone': 'Africa/Cairo',
-    #  #},
+    #   'end': {
+    #   'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+    #   'timeZone': 'Africa/Cairo',
+    #   },
     #   'reminders': {
     #   'useDefault': False,
     #  #'overrides': [
@@ -87,3 +98,20 @@ class appointmentModel(db.Model):
     #  }
 
     #  service.events().insert(calendarId='primary', body=event).execute()
+
+    def calendar (start_time,email):
+
+        calendar = GoogleCalendar('ehab.wahba98@eng-st.cu.edu.eg')
+
+        event = Event(
+         'The Glass Menagerie',
+          start=start_time,
+          location='Africa/Cairo',
+          minutes_before_popup_reminder=15
+         )
+
+        calendar.add_event(event)
+
+
+
+

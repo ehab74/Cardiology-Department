@@ -58,7 +58,7 @@ class AdmingLogin(Resource):
         admin = AdminModel.find_by_username(data["username"])
         if admin and check_password_hash(admin.password, data["password"]):
             access_token = create_access_token(
-                identity=admin.id, fresh=True, user_claims={"type": "admin"},expires_delta=datetime.timedelta(1)
+                identity=admin.id, fresh=True, user_claims={"type": "admin"},expires_delta=timedelta(1)
             )
             refresh_token = create_refresh_token(
                 identity=admin.id, user_claims={"type": "admin"}

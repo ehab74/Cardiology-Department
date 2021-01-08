@@ -2,7 +2,7 @@ from db import db
 from sqlalchemy import select
 from models.doctor import DoctorModel as Doctor
 import models.patient as Patient
-from models.appointment import appointmentModel as Appointment
+from models.appointment import AppointmentModel as Appointment
 
 
 class ExaminationModel(db.Model):
@@ -16,7 +16,7 @@ class ExaminationModel(db.Model):
         db.Integer, db.ForeignKey("Appointments.id"), nullable=False
     )
 
-    appointment = db.relationship("appointmentModel")
+    appointment = db.relationship("AppointmentModel")
 
     def __init__(self, appointment_id: int, diagnosis: str, prescription: str):
         self.diagnosis = diagnosis
