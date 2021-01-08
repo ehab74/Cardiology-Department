@@ -65,6 +65,10 @@ class PatientRegister(Resource):
         if PatientModel.find_by_email(data["email"]):
             return {"message": "A user with that email already exists"}, 400
 
+        data['gender'] = int(data['gender'])
+        if data['gender'] != 0 and data['gender'] != 1:
+            return {'message': "Invalid request: gender is only '0' if male or '1' if female"}    
+
         patient = PatientModel(**data)
         patient.save_to_db()
 

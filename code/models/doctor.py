@@ -51,7 +51,7 @@ class DoctorModel(db.Model):
             "mobile": self.mobile,
             "address": self.address,
             "birthdate": str(self.birthdate),
-            "age": (datetime.now() - self.birthdate).days // 365,
+            "age": (datetime.now() - self.birthdate).days // 365
             # 'appointments': [appointment.json() for appointment in self.appointments.all()],
         }
 

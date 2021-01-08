@@ -14,7 +14,7 @@ from flask_jwt_extended import (
     get_jwt_claims,
 )
 from blacklist import BLACKLIST
-import datetime
+from datetime import datetime,timedelta
 
 BLANK = "This field cannot be left blank."
 
@@ -52,6 +52,7 @@ class DoctorRegister(Resource):
         _doctor_parser.add_argument("birthdate", type=str, required=True, help=BLANK)
 
         data = _doctor_parser.parse_args()
+
         data['gender'] = int(data['gender'])
         if data['gender'] != 0 and data['gender'] != 1:
             return {'message': "Invalid request: gender is only '0' if male or '1' if female"}
@@ -110,8 +111,11 @@ class DoctorLogin(Resource):
         _doctor_parser.add_argument("username", type=str, required=True, help=BLANK)
 
         _doctor_parser.add_argument("password", type=str, required=True, help=BLANK)
+
         data = _doctor_parser.parse_args()
+
         doctor = DoctorModel.find_by_username(data["username"])
+        
         if doctor and check_password_hash(doctor.password, data["password"]):
             access_token = create_access_token(
                 identity=doctor.id, fresh=True, user_claims={"type": "doctor"}, expires_delta=timedelta(1)

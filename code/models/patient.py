@@ -60,7 +60,7 @@ class PatientModel(db.Model):
             "gender": "male" if self.gender == 0 else "female",
             "birthdate": str(self.birthdate),
             "age": (datetime.now() - self.birthdate).days // 365,
-            "username": self.username,
+            "username": self.username
             # 'appointments': [appointment.json() for appointment in self.appointments.all()],
         }
 
@@ -73,7 +73,7 @@ class PatientModel(db.Model):
             "mobile": self.mobile,
             "gender": "male" if self.gender == 0 else "female",
             "birthdate": str(self.birthdate),
-            "age": (datetime.now() - self.birthdate).days // 365,
+            "age":(datetime.now() - self.birthdate).days // 365,
             "username": self.username,
             "appointments": [appointment.json() for appointment in self.appointments],
         }

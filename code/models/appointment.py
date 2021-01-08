@@ -14,6 +14,7 @@ class AppointmentModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime)
+    description = db.Column(db.String(5000))
 
     doctor_id = db.Column(db.Integer, db.ForeignKey("Doctors.id"), nullable=False)
     patient_id = db.Column(db.Integer, db.ForeignKey("Patients.id"), nullable=False)
@@ -21,20 +22,25 @@ class AppointmentModel(db.Model):
     doctor = db.relationship("DoctorModel")
     patient = db.relationship("PatientModel")
 
-    def __init__(self, date, doctor_id, patient_id, created_at):
+    def __init__(self, date, doctor_id, patient_id, created_at,description):
         self.date = date
         self.doctor_id = doctor_id
         self.patient_id = patient_id
         self.created_at = created_at
+        self.description = description
 
     def json(self):
         return {
             "_id": self.id,
-            "date": str(self.date),
+            "date": self.date.strftime("%Y-%m-%d"),
             "patient_id": self.patient_id,
+            "patient_username": self.patient.username,
             "doctor_id": self.doctor_id,
-            "date_of_reservation": str(self.created_at),
-        }
+            "doctor_username":self.doctor.username,
+            "date_of_reservation": self.created_at.strftime("%Y-%m-%d"),
+            "description": self.description
+
+        }   
 
     def save_to_db(self):
         db.session.add(self)
@@ -54,9 +60,10 @@ class AppointmentModel(db.Model):
 
     @classmethod
     def find_by_date(cls,date):
-        return cls.query.filter_by(date=date).all()    
+        return cls.query.filter_by(date=date).first()    
 
     # def main(start_time):
+
     #  SCOPES = ['https://www.googleapis.com/auth/calendar']
     #  creds = None
 
@@ -101,15 +108,34 @@ class AppointmentModel(db.Model):
 
     # def calendar (start_time,email):
 
-    #     calendar = GoogleCalendar('ehab.wahba98@eng-st.cu.edu.eg')
+    #     calendar = GoogleCalendar('mohnedalaa33@gmail.com')
 
-    #     event = Event(
-    #      'The Glass Menagerie',
-    #       start=start_time,
-    #       location='Africa/Cairo',
-    #       minutes_before_popup_reminder=15
-    #      )
-
+    #     # event = Event(
+    #     #  'The Glass Menagerie',
+    #     #   start=start_time,
+    #     #   #location='Africa/Cairo',
+    #     #   minutes_before_popup_reminder=15
+    #     #  )
+    #     event = {
+    #     'summary': 'Doctor Appointment',
+    #     'location': 'Cairo',
+    #     'description': '',
+    #     'start': {
+    #     'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+    #     'timeZone': 'Africa/Cairo',
+    #      },
+    #     'end': {
+    #     'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+    #     'timeZone': 'Africa/Cairo',
+    #     },
+    #     'reminders': {
+    #     'useDefault': False,
+    #  #'overrides': [
+    #   #{'method': 'email', 'minutes': 24 * 60},
+    #   #{'method': 'popup', 'minutes': 10},
+    #   #],
+    #     },
+    #     }
     #     calendar.add_event(event)
 
 

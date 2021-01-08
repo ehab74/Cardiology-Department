@@ -12,10 +12,14 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_jwt_claims,
 )
+
 class appointment(Resource):
     appointment_parser = reqparse.RequestParser()
     appointment_parser.add_argument(
         "doctor_id", type=str, required=True, help="This field cannot be blank."
+    )
+    appointment_parser.add_argument(
+        "description", type=str, required=False, help="This field cannot be blank."
     )
     appointment_parser.add_argument("patient_id", type=int, required=False)
     appointment_parser.add_argument(
@@ -57,13 +61,13 @@ class appointment(Resource):
 
         apps_date = AppointmentModel.find_by_date(app_date)
 
-        if apps_date:
+        if apps_date and apps_date.patient_id==identity:
             return {"message":"Appointment already exists at the same date"} 
-            
+
+        #AppointmentModel.main(app_date)    
         appointment = AppointmentModel(**data)
         appointment.save_to_db()
 
-        #AppointmentModel.calendar(app_dateTime,PatientModel.find_by_id(identity).email)
         return {"message": "Appointment created successfully."}, 201
 
     @classmethod
@@ -74,7 +78,7 @@ class appointment(Resource):
 
         if claims["type"] == "doctor":
             doctor_appointments = DoctorModel.find_by_id(identity).appointments
-
+            
             doctorapp = [appointment.json() for appointment in doctor_appointments]
             return doctorapp, 200
 
