@@ -1,8 +1,10 @@
 from models.examination import ExaminationModel
+from models.appointment import appointmentModel
 from flask_restful import Resource, reqparse
 from datetime import datetime
 from models.doctor import DoctorModel
 from models.patient import PatientModel
+from models.appointment import appointmentModel
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -16,26 +18,20 @@ BLANK = "This field cannot be left blank"
 
 class ExaminationRegister(Resource):
     examination_parser = reqparse.RequestParser()
-    examination_parser.add_argument("patient_id", type=int, required=True, help=BLANK)
-    examination_parser.add_argument("doctor_id", type=int, required=False)
-    examination_parser.add_argument("check_in_date", type=str, required=False)
     examination_parser.add_argument("diagnosis", type=str, required=True, help=BLANK)
-    examination_parser.add_argument("patient_name", type=str, required=True, help=BLANK)
-    examination_parser.add_argument("doctor_name", type=str, required=True, help=BLANK)
+    examination_parser.add_argument("prescription", type=str, required=True, help=BLANK)
     @classmethod
     @jwt_required
-    def post(cls):
+    def post(cls, app_id):
         data = cls.examination_parser.parse_args()
         if get_jwt_claims()['type'] == "doctor":
-            patient = PatientModel.find_by_id(data['patient_id'])
-            if patient:
-                data['doctor_id'] = get_jwt_identity()
-                data['check_in_date'] = datetime.now().strftime("%d/%m/%Y")
-                examination = ExaminationModel(**data)
+            appointment = appointmentModel.find_by_id(app_id)
+            if appointment:
+                examination = ExaminationModel(**data, appointment_id=app_id)
                 examination.save_to_db()
-                return {'message': 'Added Successfully.'}
-            return {'message': 'Patient not found'}
-        return {'message': 'Authorization required: You must be a doctor.'}
+                return {'message': 'Added Successfully.'}, 200
+            else: return {'message': "No appointment with this id exists"}, 404
+        return {'message': 'Authorization required: You must be a doctor.'}, 401
     
 class PatientExaminations(Resource):
     @classmethod
@@ -43,7 +39,7 @@ class PatientExaminations(Resource):
     def get(cls, patient_id):
         if get_jwt_claims()['type'] == 'doctor':
             examinations = ExaminationModel.find_all_filtered(patient_id)
-            examination_list = [examination.json() for examination in examinations]
+            examination_list = [examination.json_with_info() for examination in examinations]
             return examination_list, 200
         return {'message': 'Unauthorized: You must be a doctor'}
 
@@ -52,8 +48,8 @@ class Examination(Resource):
     @jwt_required
     def get(cls, examination_id):
         if get_jwt_claims()['type'] == 'doctor' or get_jwt_claims()['type'] == 'admin':
-            examination = ExaminationModel.find_by_id(examination_id)
-            return examination.json()
+            examination = ExaminationModel.find_by_id_with_info(examination_id)
+            return examination.json_with_info()
         return {'message': 'Invalid authorization'}
 
     @classmethod
@@ -71,10 +67,22 @@ class ExaminationList(Resource):
     def get(cls):
         if get_jwt_claims()['type'] == 'admin':
             examinations = ExaminationModel.find_all()
-            examinations_list = [examination.json() for examination in examinations]
+
+            examinations_list = [examination.json_with_info() for examination in examinations]
             return examinations_list, 200
         return {'message': 'Unauthorized: Admin authorization required.'}
 
+class CurrentPatientExaminations(Resource):
+    @classmethod
+    @jwt_required
+    def get(cls):
+        if get_jwt_claims()['type'] == 'patient':
+            patient_id = get_jwt_identity()
+            examinations = ExaminationModel.find_all_filtered(patient_id)
+            examination_list = [examination.json_with_info() for examination in examinations]
+            return examination_list, 200
+        return {'message': 'Unauthorized: You must be a doctor'}
+        
 
 
 

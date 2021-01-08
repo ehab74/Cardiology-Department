@@ -22,8 +22,9 @@ class appointment(Resource):
         "date", type=str, required=True, help="This field cannot be blank."
     )
 
-    @jwt_required
+    
     @classmethod
+    @jwt_required
     def post(cls):
         claims = get_jwt_claims()
         if claims["type"] == "doctor":
@@ -31,7 +32,7 @@ class appointment(Resource):
 
         identity = get_jwt_identity()
         data = cls.appointment_parser.parse_args()
-        if data["doctor_id"].isspace() or data["date"].isspace():
+        if data["date"].isspace():
             return {'message': 'One of the inputs is empty'},400
 
         data["patient_id"] = identity
@@ -40,12 +41,13 @@ class appointment(Resource):
         if not doctor:
             return {"message": "Doctor not found"}, 404
 
-        data["current_time"] = datetime.now().strftime("%Y-%m-%d")
+        data["created_at"] = datetime.now().strftime("%Y-%m-%d")
         y1, m1, d1 = [int(x) for x in data["date"].split("-")]
-        y2, m2, d2 = [int(x) for x in data["current_time"].split("-")]
+        y2, m2, d2 = [int(x) for x in data["created_at"].split("-")]
 
         appdate = datetime(y1, m1, d1)
         current_date = datetime(y2, m2, d2)
+
 
         if appdate < current_date:
             return {"message": "Invalid date"}
@@ -63,26 +65,19 @@ class appointment(Resource):
         if claims["type"] == "doctor":
             doctor_appointments = DoctorModel.find_by_id(identity).appointments
 
-            doctorapp = []
-            for appointment in doctor_appointments:
-                doctorapp.append(appointment.json())
-            return doctorapp
+            doctorapp = [appointment.json() for appointment in doctor_appointments]
+            return doctorapp, 200
 
         elif claims["type"] == "patient":
             patient_appointments = PatientModel.find_by_id(identity).appointments
 
-            patientapp = []
-            for appointment in patient_appointments:
-                patientapp.append(appointment.json())
+            patientapp = [appointment.json() for appointment in patient_appointments]
             return patientapp
 
         else:
-            patents = appointmentModel.find_all()
-            patientapp = []
-            for appointment in patients:
-                patientapp.append(appointment.json())
-
-            return patientapp
+            appointments = appointmentModel.find_all()
+            appointments_list = [appointment.json() for appointment in appointments]
+            return appointments_list, 200
 
 
 class deleteAppointments(Resource):
@@ -93,7 +88,7 @@ class deleteAppointments(Resource):
         if claims["type"] != "admin":
             return {"message": "access denied"}
 
-        app = appointmetModel.find_by_id(app_id)
+        app = appointmentModel.find_by_id(app_id)
         if not app:
             return {"message": "Appointment not found"}, 404
         app.delete_from_db()

@@ -14,6 +14,7 @@ from flask_jwt_extended import (
     get_jwt_claims,
 )
 from blacklist import BLACKLIST
+import datetime
 
 BLANK = "This field cannot be left blank."
 
@@ -44,18 +45,16 @@ class DoctorRegister(Resource):
 
         _doctor_parser.add_argument("mobile", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument("gender", type=str, required=True, help=BLANK)
+        _doctor_parser.add_argument("gender", type=int, required=True, help=BLANK)
 
         _doctor_parser.add_argument("address", type=str, required=True, help=BLANK)
 
-        _doctor_parser.add_argument("age", type=int, required=True, help=BLANK)
+        _doctor_parser.add_argument("birthdate", type=str, required=True, help=BLANK)
 
         data = _doctor_parser.parse_args()
         if (
             data["username"].isspace()
             or data["password"].isspace()
-            or data["age"].isspace()
-            or data["gender"].isspace()
             or data["address"].isspace()
             or data["mobile"].isspace()
             or data["email"].isspace()
@@ -67,8 +66,6 @@ class DoctorRegister(Resource):
         if len(data['username']) <5:
             return {'message' : 'Username is too short'},400
 
-        if data["age"] <= 0:
-            return {"message": "Age must be greater than 0"}, 400
 
         if DoctorModel.find_by_username(data["username"]):
             return {"message": DOCTOR_ALREADY_EXISTS}, 400
@@ -114,7 +111,7 @@ class DoctorLogin(Resource):
         doctor = DoctorModel.find_by_username(data["username"])
         if doctor and check_password_hash(doctor.password, data["password"]):
             access_token = create_access_token(
-                identity=doctor.id, fresh=True, user_claims={"type": "doctor"}
+                identity=doctor.id, fresh=True, user_claims={"type": "doctor"}, expires_delta=False
             )
             refresh_token = create_refresh_token(
                 identity=doctor.id, user_claims={"type": "doctor"}
@@ -137,29 +134,20 @@ class DoctorList(Resource):
     @classmethod
     def get(cls):
         doctors = DoctorModel.find_all()
-        doctors_list = []
-        for doctor in doctors:
-            doctors_list.append(
-                {
-                    "first_name": doctor[0],
-                    "last_name": doctor[1],
-                    "mobile": doctor[2],
-                    "age": doctor[3],
-                    "_id": doctor[4],
-                }
-            )
-
+        doctors_list = [doctor.json() for doctor in doctors]
         return doctors_list, 200
 
 class DoctorPatient(Resource):
     @classmethod
     @jwt_required
     def get(cls):
-        if get_jwt_claims()['type'] == 'doctor':
-            identity = get_jwt_identity()
-            patients = ExaminationModel.find_by_examinations(identity)
-            return patients, 200
-        return {'message': 'You must have a doctor authorization.'}
+        if get_jwt_claims()['type'] != 'doctor':
+            return {'message': 'You must be a doctor'}
+
+        identity = get_jwt_identity()
+        results = PatientModel.find_by_doctor(identity)
+        result_list = [result.json() for result in results]
+        return result_list, 200
 
 
 

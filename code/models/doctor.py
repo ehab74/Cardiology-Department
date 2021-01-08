@@ -1,6 +1,6 @@
 from db import db
 from werkzeug.security import generate_password_hash
-
+from datetime import datetime
 
 class DoctorModel(db.Model):
     __tablename__ = "Doctors"
@@ -10,26 +10,25 @@ class DoctorModel(db.Model):
     first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))
     email = db.Column(db.String(80), unique=True)
-    gender = db.Column(db.String(80))
+    gender = db.Column(db.Integer)
     address = db.Column(db.String(80))
     mobile = db.Column(db.String(80))
-    age = db.Column(db.Integer)
+    birthdate = db.Column(db.DateTime)
 
-    appointments = db.relationship('appointmentModel',lazy = 'dynamic')
-    examinations = db.relationship('ExaminationModel', lazy='dynamic')
+    appointments = db.relationship('appointmentModel')
 
 
     def __init__(
         self,
-        username: str,
-        password: str,
-        first_name: str,
-        last_name: str,
-        email: str,
-        gender: str,
-        mobile: str,
-        address: str,
-        age: int,
+        first_name,
+        last_name,
+        email,
+        mobile,
+        gender,
+        birthdate,
+        username,
+        password,
+        address,
     ):
         self.username = username
         self.password = generate_password_hash(password)
@@ -39,7 +38,7 @@ class DoctorModel(db.Model):
         self.gender = gender
         self.mobile = mobile
         self.address = address
-        self.age = age
+        self.birthdate = birthdate
 
     def json(self):
         return {
@@ -48,13 +47,12 @@ class DoctorModel(db.Model):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
-            "gender": self.gender,
+            "gender": 'male' if self.gender == 0 else 'female',
             "mobile": self.mobile,
             "address": self.address,
-            "age": self.age,
-            'appointments': [appointment.json() for appointment in self.appointments.all()],
-            'examinations': [examination.json() for examination in self.examinations.all()]
-
+            "birthdate": str(self.birthdate),
+            "age": (datetime.now() - self.birthdate).days//365,
+            # 'appointments': [appointment.json() for appointment in self.appointments.all()],
         }
 
     def save_to_db(self):
@@ -79,4 +77,4 @@ class DoctorModel(db.Model):
 
     @classmethod
     def find_all(cls):
-        return cls.query.with_entities(cls.first_name, cls.last_name, cls.mobile, cls.age, cls.id).all()
+        return cls.query.all()

@@ -2,7 +2,13 @@ from db import db
 from werkzeug.security import generate_password_hash
 from models.doctor import DoctorModel
 from models.examination import ExaminationModel
+from models.appointment import appointmentModel
+from sqlalchemy import Enum
+from datetime import datetime
 
+class GenderEnum(Enum):
+    male = 0
+    female = 1
 
 class PatientModel(db.Model):
     __tablename__ = "Patients"
@@ -13,13 +19,12 @@ class PatientModel(db.Model):
     email = db.Column(db.String(80), unique=True)
     mobile = db.Column(db.String(80))
     address = db.Column(db.String(80))
-    gender = db.Column(db.String(80))
-    age = db.Column(db.Integer)
+    gender = db.Column(db.Integer)
+    birthdate = db.Column(db.DateTime)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))
-    prescriptions = db.relationship("PrescriptionModel", lazy="dynamic")
-    examinations = db.relationship("ExaminationModel", lazy="dynamic")
-    appointments = db.relationship('appointmentModel',lazy = 'dynamic')
+    
+    appointments = db.relationship('appointmentModel')
    
     def __init__(
         self,
@@ -28,7 +33,7 @@ class PatientModel(db.Model):
         email,
         mobile,
         gender,
-        age,
+        birthdate,
         username,
         password,
         address,
@@ -38,7 +43,7 @@ class PatientModel(db.Model):
         self.email = email
         self.mobile = mobile
         self.gender = gender
-        self.age = age
+        self.birthdate = birthdate
         self.username = username
         self.password = generate_password_hash(password)
         self.address = address
@@ -51,12 +56,12 @@ class PatientModel(db.Model):
         "last_name": self.last_name,
         "email": self.email,
         "mobile": self.mobile,
-        "gender": self.gender,
-        "age":self.age,
+        "gender": 'male' if self.gender == 0 else 'female',
+        "birthdate":str(self.birthdate),
+        "age": (datetime.now() - self.birthdate).days//365,
         "username":self.username,
-        "prescriptions": [Prescriptions.json() for prescription in self.prescriptions.all()],
-        'appointments': [appointment.json() for appointment in self.appointments.all()],
-        'examinations': [examination.json() for examination in self.examinations.all()]}
+        # 'appointments': [appointment.json() for appointment in self.appointments.all()],
+        }
 
     def save_to_db(self):
         db.session.add(self)
@@ -82,3 +87,7 @@ class PatientModel(db.Model):
     def find_all(cls):
         return cls.query.all()
 
+    @classmethod
+    def find_by_doctor(PatientModel, doctor_id):
+        patientList = PatientModel.query.join(appointmentModel, PatientModel.id == appointmentModel.patient_id).filter(appointmentModel.doctor_id == doctor_id)
+        return patientList

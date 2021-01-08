@@ -28,13 +28,10 @@ class PatientRegister(Resource):
         "last_name", type=str, required=True, help="This field cannot be blank."
     )
     patient_parser.add_argument(
-        "age", type=int, required=True, help="This field cannot be blank."
-    )
-    patient_parser.add_argument(
         "email", type=str, required=True, help="This field cannot be blank."
     )
     patient_parser.add_argument(
-        "gender", type=str, required=True, help="This field cannot be blank."
+        "gender", type=int, required=True, help="This field cannot be blank."
     )
     patient_parser.add_argument(
         "mobile", type=str, required=True, help="This field cannot be blank."
@@ -42,6 +39,7 @@ class PatientRegister(Resource):
     patient_parser.add_argument(
         "address", type=str, required=True, help="This field cannot be blank."
     )
+    patient_parser.add_argument("birthdate", type=str, required=True, help="This field cannot be blank")
 
     def post(self):
         data = PatientRegister.patient_parser.parse_args()
@@ -49,8 +47,6 @@ class PatientRegister(Resource):
         if (
             data["username"].isspace()
             or data["password"].isspace()
-            or data["age"].isspace()
-            or data["gender"].isspace()
             or data["address"].isspace()
             or data["mobile"].isspace()
             or data["email"].isspace()
@@ -61,9 +57,6 @@ class PatientRegister(Resource):
 
         if len(data['username']) <5:
             return {'message' : 'Username is too short'},400
-
-        if data["age"] <= 0:
-            return {"message": "Age must be greater than 0"}
 
         if PatientModel.find_by_username(data["username"]):
             return {"message": "A user with that username already exists"}, 400

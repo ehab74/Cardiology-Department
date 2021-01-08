@@ -25,8 +25,8 @@ from resources.patient import (
 from resources.appointment import appointment,deleteAppointments
 from resources.refresh import TokenRefresh
 from resources.admin import AdminRegister, AdmingLogin, AdminLogout
-from resources.prescription import PrescriptionRegister, Prescription, PrescriptionsList, PatientPrescriptionList
-from resources.examination import Examination, ExaminationList, ExaminationRegister, PatientExaminations
+# from resources.prescription import PrescriptionRegister, Prescription, PrescriptionsList, PatientPrescriptionList
+from resources.examination import Examination, ExaminationList, ExaminationRegister, PatientExaminations, CurrentPatientExaminations
 
 
 # pymysql.install_as_MySQLdb()
@@ -142,20 +142,20 @@ api.add_resource(PatientLogin, '/patient/login')
 #api.add_resource(TokenRefresh, '/patient/refresh')
 api.add_resource(PatientLogout, '/patient/logout')
 api.add_resource(appointment, '/appointments')
-api.add_resource(deleteAppointments,'/deleteAppointments:<int:app_id>')
+api.add_resource(deleteAppointments,'/appointments/<int:app_id>')
 api.add_resource(PatientList, "/patients")
 api.add_resource(AdminRegister, "/admin/register")
 api.add_resource(AdmingLogin, "/admin/login")
 api.add_resource(AdminLogout, "/admin/logout")
-api.add_resource(PrescriptionRegister, "/add_prescription")
-api.add_resource(Prescription, "/prescription/<int:prescription_id>")
-api.add_resource(PatientPrescriptionList, "/patient/prescriptions")
-api.add_resource(PrescriptionsList, "/prescriptions")
-api.add_resource(ExaminationRegister, "/examination/reg")
-api.add_resource(PatientExaminations, "/patient/examinations/<int:patient_id>")
+# api.add_resource(PrescriptionRegister, "/add_prescription")
+# api.add_resource(Prescription, "/prescription/<int:prescription_id>")
+# api.add_resource(PatientPrescriptionList, "/patient/prescriptions")
+# api.add_resource(PrescriptionsList, "/prescriptions")
+api.add_resource(ExaminationRegister, "/appointments/<int:app_id>/examinations")
+api.add_resource(PatientExaminations, "/patient/<int:patient_id>/examinations")
 api.add_resource(ExaminationList, "/examinations")
 api.add_resource(Examination, "/examination/<int:examination_id>")
-
+api.add_resource(CurrentPatientExaminations, "/patient/examinations")
 
 if __name__ == "__main__":
     from db import db

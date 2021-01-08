@@ -4,8 +4,8 @@ class appointmentModel(db.Model):
     __tablename__ = 'Appointments'
 
     id = db.Column(db.Integer,primary_key = True)
-    date = db.Column(db.String(80))
-    current_date = db.Column(db.String(80))
+    date = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime)
 
     doctor_id = db.Column (db.Integer,db.ForeignKey('Doctors.id'))
     patient_id = db.Column (db.Integer,db.ForeignKey('Patients.id'))
@@ -13,19 +13,19 @@ class appointmentModel(db.Model):
     doctor = db.relationship('DoctorModel') 
     patient = db.relationship('PatientModel')
 
-    def __init__ (self,date,doctor_id,patient_id,current_date):
+    def __init__ (self,date,doctor_id,patient_id,created_at):
         self.date = date
         self.doctor_id = doctor_id
         self.patient_id = patient_id
-        self.current_date = current_date
+        self.created_at = created_at
 
     def json (self):
         return {
             '_id': self.id,
-            'date' : self.date,
-            'patient username': self.patient_id,
-            'doctor username': self.doctor_id,
-            'date of reservation': self.current_date
+            'date' : str(self.date),
+            'patient_id': self.patient_id,
+            'doctor_id': self.doctor_id,
+            'date_of_reservation': str(self.created_at)
         }
 
     def save_to_db(self):
@@ -40,10 +40,10 @@ class appointmentModel(db.Model):
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
 
+    @classmethod
     def find_all(cls):
-        apps = cls.query().all()
+        return cls.query.all()
 
-        patientsapp = [app.json() for app in apps]
-        return patientsapp          
+        
 
 
