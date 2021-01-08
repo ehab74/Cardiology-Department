@@ -112,7 +112,7 @@ class PatientLogin(Resource):
 
         if patient and check_password_hash(patient.password, data["password"]):
             access_token = create_access_token(
-                identity=patient.id, fresh=True, user_claims={"type": "patient"},expires_delta=datetime.timedelta(1)
+                identity=patient.id, fresh=True, user_claims={"type": "patient"}
             )
             refresh_token = create_refresh_token(
                 identity=patient.id, user_claims={"type": "patient"}
