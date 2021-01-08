@@ -13,7 +13,7 @@ class ExaminationModel(db.Model):
     prescription = db.Column(db.String(5000))
 
     appointment_id = db.Column(
-        db.Integer, db.ForeignKey("Appointments.id"), nullable=False
+        db.Integer, db.ForeignKey("Appointments.id",ondelete = 'SET NULL')
     )
 
     appointment = db.relationship("AppointmentModel")
