@@ -73,7 +73,7 @@ class PatientModel(db.Model):
             "mobile": self.mobile,
             "gender": "male" if self.gender == 0 else "female",
             "birthdate": str(self.birthdate),
-            "age":(datetime.now() - self.birthdate).days // 365,
+            "age": (datetime.now() - self.birthdate).days // 365,
             "username": self.username,
             "appointments": [appointment.json() for appointment in self.appointments],
             "examinations": [examination.mini_json() for examination in PatientModel.get_examinations(self.id)]

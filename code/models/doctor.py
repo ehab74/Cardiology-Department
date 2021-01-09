@@ -1,7 +1,7 @@
 from db import db
 from werkzeug.security import generate_password_hash
+from models.appointment import AppointmentModel
 from datetime import datetime
-import ondelete
 
 
 class DoctorModel(db.Model):
@@ -52,11 +52,11 @@ class DoctorModel(db.Model):
             "birthdate": str(self.birthdate),
             "age": (datetime.now() - self.birthdate).days // 365,
             "username": self.username,
-            "address":self.address
+            "address": self.address
             # 'appointments': [appointment.json() for appointment in self.appointments.all()],
         }
 
-    def json_with_examinations(self):
+    def json_with_appointments(self):
         return {
             "_id": self.id,
             "first_name": self.first_name,
@@ -68,7 +68,7 @@ class DoctorModel(db.Model):
             "age": (datetime.now() - self.birthdate).days // 365,
             "username": self.username,
             "appointments": [appointment.json() for appointment in self.appointments],
-        }    
+        }
 
     def save_to_db(self):
         db.session.add(self)
@@ -92,8 +92,12 @@ class DoctorModel(db.Model):
 
     @classmethod
     def find_all(cls):
-        return cls.query.all()    
+        return cls.query.all()
 
     @classmethod
-    def find_all_with_appointments(cls):
-        return cls.query.join(AppointmentModel,AppointmentModel.doctor_id==cls.id).all()
+    def find_docotor_by_id_with_appointments(cls, doctor_id):
+        return (
+            cls.query.join(AppointmentModel, AppointmentModel.doctor_id == cls.id)
+            .filter(doctor_id == cls.id)
+            .first()
+        )

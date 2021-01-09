@@ -13,20 +13,28 @@ from resources.doctor import (
     DoctorLogin,
     DoctorLogout,
     DoctorList,
-    DoctorPatient
+    DoctorPatient,
 )
 from resources.patient import (
     PatientRegister,
     Patient,
     PatientLogin,
     PatientLogout,
-    PatientList
+    PatientList,
 )
-from resources.appointment import appointment,deleteAppointments
+from resources.appointment import appointment, deleteAppointments
 from resources.refresh import TokenRefresh
 from resources.admin import AdminRegister, AdmingLogin, AdminLogout
+
 # from resources.prescription import PrescriptionRegister, Prescription, PrescriptionsList, PatientPrescriptionList
-from resources.examination import Examination, ExaminationList, ExaminationRegister, PatientExaminations
+from resources.examination import (
+    Examination,
+    ExaminationList,
+    ExaminationRegister,
+    PatientExaminations,
+    CurrentPatientExaminations,
+)
+from resources.contact_us import ContactUs, ContactUsList, ContactUsRegister
 
 
 # pymysql.install_as_MySQLdb()
@@ -150,6 +158,10 @@ api.add_resource(ExaminationRegister, "/appointments/<int:app_id>/examinations")
 api.add_resource(PatientExaminations, "/patient/<int:patient_id>/examinations")
 api.add_resource(ExaminationList, "/examinations") # for admin-> all examinations, and patient -> logged in patient examinations
 api.add_resource(Examination, "/examination/<int:examination_id>")
+api.add_resource(CurrentPatientExaminations, "/patient/examinations")
+api.add_resource(ContactUsRegister, "/contactus/form")
+api.add_resource(ContactUs, "/contactus/<int:form_id>")
+api.add_resource(ContactUsList, "/contactus/forms")
 
 if __name__ == "__main__":
     from db import db

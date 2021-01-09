@@ -90,16 +90,16 @@ class DoctorRegister(Resource):
 class Doctor(Resource):
     @classmethod
     def get(cls, doctor_id: int):
-        user = DoctorModel.find_by_id(doctor_id)
+        user = DoctorModel.find_docotor_by_id_with_appointments(doctor_id)
         if not user:
             return {"message": USER_NOT_FOUND}, 404
-        return user.json()
+        return user.json_with_appointments()
 
     @classmethod
     @jwt_required
     def delete(cls, doctor_id: int):
         if get_jwt_claims()["type"] == "admin":
-            doctor = DoctorModel.find_by_id(doctor_id)
+            doctor = DoctorModel.find_by_id_(doctor_id)
             if not doctor:
                 return {"message": USER_NOT_FOUND}, 404
             doctor.delete_from_db()
