@@ -85,7 +85,7 @@ class DoctorModel(db.Model):
     @classmethod
     def find_by_id(cls, _id: int):
         return cls.query.filter_by(id=_id).first()
-
+    
     @classmethod
     def find_by_email(cls, email):
         return cls.query.filter_by(email=email).first()

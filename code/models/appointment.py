@@ -60,7 +60,7 @@ class AppointmentModel(db.Model):
 
     @classmethod
     def find_by_date(cls, date):
-        return cls.query.filter_by(date=date).first()
+        return cls.query.filter_by(date=date).all()
 
     def main(start_time):
 
