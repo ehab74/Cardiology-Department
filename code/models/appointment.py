@@ -5,8 +5,6 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from gcsa.google_calendar import GoogleCalendar
-from gcsa.event import Event
 
 
 class AppointmentModel(db.Model):
@@ -78,7 +76,7 @@ class AppointmentModel(db.Model):
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'client_secret2.json', SCOPES)
+                'client_secrets.json', SCOPES)
             creds = flow.run_local_server(port=0)
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
