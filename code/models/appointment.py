@@ -5,8 +5,8 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from gcsa.google_calendar import GoogleCalendar
-from gcsa.event import Event
+# from gcsa.google_calendar import GoogleCalendar
+# from gcsa.event import Event
 
 
 class AppointmentModel(db.Model):
