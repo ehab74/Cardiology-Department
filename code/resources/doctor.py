@@ -77,7 +77,9 @@ class DoctorRegister(Resource):
 
         if DoctorModel.find_by_email(data["email"]):
             return {"message": DOCTOR_ALREADY_EXISTS2}, 400
-
+        
+        y, m, d = [int(x) for x in data["birthdate"].split("-")]
+        data['birthdate'] = datetime(y,m,d)
         if ((datetime.now() - data["birthdate"]).days // 365) < 25:
             return {"message": "Inappropriate age"}, 400
 
@@ -163,12 +165,3 @@ class DoctorPatient(Resource):
         results = PatientModel.find_by_doctor(identity)
         result_list = [result.json() for result in results]
         return result_list, 200
-
-
-# class TokenRefresh(Resource):
-#     @classmethod
-#     @jwt_refresh_token_required
-#     def post(cls):
-#         current_user = get_jwt_identity()
-#         new_token = create_access_token(identity=current_user, fresh=False)
-#         return {"access_token": new_token}, 200
