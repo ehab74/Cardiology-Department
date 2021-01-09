@@ -1,12 +1,12 @@
 from db import db
 from datetime import datetime,timedelta
-# import pickle
-# import os.path
-# from googleapiclient.discovery import build
-# from google_auth_oauthlib.flow import InstalledAppFlow
-# from google.auth.transport.requests import Request
-# from gcsa.google_calendar import GoogleCalendar
-# from gcsa.event import Event
+import pickle
+import os.path
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from gcsa.google_calendar import GoogleCalendar
+from gcsa.event import Event
 
 class AppointmentModel(db.Model):
     __tablename__ = "Appointments"
@@ -62,53 +62,53 @@ class AppointmentModel(db.Model):
     def find_by_date(cls,date):
         return cls.query.filter_by(date=date).first()    
 
-    # def main(start_time):
+    def main(start_time):
 
-    #  SCOPES = ['https://www.googleapis.com/auth/calendar']
-    #  creds = None
+     SCOPES = ['https://www.googleapis.com/auth/calendar']
+     creds = None
 
-    #  if os.path.exists('token.pickle'):
-    #     with open('token.pickle', 'rb') as token:
-    #         creds = pickle.load(token)
+     if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
 
-    #  if not creds or not creds.valid:
-    #     if creds and creds.expired and creds.refresh_token:
-    #         creds.refresh(Request())
-    #     else:
-    #         flow = InstalledAppFlow.from_client_secrets_file(
-    #             'client_secret2.json', SCOPES)
-    #         creds = flow.run_local_server(port=0)
-    #     with open('token.pickle', 'wb') as token:
-    #         pickle.dump(creds, token)
+     if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'client_secret2.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
 
-    #  service = build('calendar', 'v3', credentials=creds)
-    #  end_time = start_time + timedelta(hours = 4 ) 
-    #  event = {
-    #   'summary': 'Doctor Appointment',
-    #   'location': 'Cairo',
-    #   'description': '',
-    #   'start': {
-    #   'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
-    #   'timeZone': 'Africa/Cairo',
-    #    },
-    #   'end': {
-    #   'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
-    #   'timeZone': 'Africa/Cairo',
-    #   },
-    #   'reminders': {
-    #   'useDefault': False,
-    #  #'overrides': [
-    #   #{'method': 'email', 'minutes': 24 * 60},
-    #   #{'method': 'popup', 'minutes': 10},
-    #   #],
-    #   },
-    #  }
+     service = build('calendar', 'v3', credentials=creds)
+     end_time = start_time + timedelta(hours = 4 ) 
+     event = {
+      'summary': 'Doctor Appointment',
+      'location': 'Cairo',
+      'description': '',
+      'start': {
+      'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+      'timeZone': 'Africa/Cairo',
+       },
+      'end': {
+      'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+      'timeZone': 'Africa/Cairo',
+      },
+      'reminders': {
+      'useDefault': False,
+     #'overrides': [
+      #{'method': 'email', 'minutes': 24 * 60},
+      #{'method': 'popup', 'minutes': 10},
+      #],
+      },
+     }
 
-    #  service.events().insert(calendarId='primary', body=event).execute()
+     service.events().insert(calendarId='primary', body=event).execute()
 
     # def calendar (start_time,email):
 
-    #     calendar = GoogleCalendar('mohnedalaa33@gmail.com')
+    #     calendar = GoogleCalendar('momen99223@gmail.com')
 
     #     # event = Event(
     #     #  'The Glass Menagerie',

@@ -31,14 +31,20 @@ class ExaminationModel(db.Model):
             "appointment_id": self.appointment_id,
         }
 
+    def mini_json(self):
+        return {
+            "_id": self.id,
+            "diagnosis": self.diagnosis,
+            "prescription": self.prescription,
+        }    
+
     def json_with_info(self):
         return {
             "_id": self.id,
             "diagnosis": self.diagnosis,
             "prescription": self.prescription,
-            "appointment": {**self.appointment.json()},
-            "patient": {**self.appointment.patient.json()},
-            "doctor": {**self.appointment.doctor.json()},
+            "appointment": {**self.appointment.json()}
+
         }
 
     def save_to_db(self):

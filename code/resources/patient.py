@@ -67,6 +67,9 @@ class PatientRegister(Resource):
         if PatientModel.find_by_email(data["email"]):
             return {"message": "A user with that email already exists"}, 400
 
+        if ((datetime.now() - data['birthdate']).days // 365) < 25:
+            return {"message":"Inappropriate age"},400   
+    
         data["gender"] = int(data["gender"])
         if data["gender"] != 0 and data["gender"] != 1:
             return {
@@ -83,12 +86,12 @@ class Patient(Resource):
     @classmethod
     @jwt_required
     def get(cls, patient_id):
-        if get_jwt_claims()["type"] == "admin":
+        if get_jwt_claims()["type"] != "patient":
             patient = PatientModel.find_by_id(patient_id)
             if patient:
-                return patient.json_with_appointments()
+                return patient.json_with_info()
             return {"message": "User not found"}, 404
-        return {"message": "You have to be an admin"}
+        return {"message": "You have to be an admin or doctor"}
 
     @classmethod
     @jwt_required
@@ -130,14 +133,6 @@ class PatientLogin(Resource):
             )
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
         return {"message": "Invaild credentials"}, 401
-
-
-# class pTokenRefresh(Resource):
-#    @jwt_refresh_token_required
-#    def post(self):
-#        current_patient = get_jwt_identity()
-#        new_token = create_access_token (identity = current_patient,fresh = False)
-#        return {"access_token":new_token},200
 
 
 class PatientLogout(Resource):

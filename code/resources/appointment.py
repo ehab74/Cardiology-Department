@@ -64,7 +64,7 @@ class appointment(Resource):
         if apps_date and apps_date.patient_id == identity:
             return {"message": "Appointment already exists at the same date"}
 
-        # AppointmentModel.main(app_date)
+        AppointmentModel.main(app_date)
         appointment = AppointmentModel(**data)
         appointment.save_to_db()
 
