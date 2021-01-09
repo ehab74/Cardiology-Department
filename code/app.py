@@ -31,7 +31,7 @@ from resources.examination import (
     Examination,
     ExaminationList,
     ExaminationRegister,
-    PatientExaminations,
+    PatientExaminations
 )
 from resources.contact_us import ContactUs, ContactUsList, ContactUsRegister
 

@@ -84,25 +84,32 @@ class AppointmentModel(db.Model):
             pickle.dump(creds, token)
 
      service = build('calendar', 'v3', credentials=creds)
-     end_time = start_time + timedelta(hours = 4 ) 
+
+     app_date = start_time.strftime("%Y-%m-%d")
+
+     y1, m1, d1 = [int(x) for x in app_date.split("-")]
+
+     app_date = datetime(y1, m1, d1,9,0,0)
+
+     end_time = app_date + timedelta(hours = 4 ) 
      event = {
       'summary': 'Doctor Appointment',
       'location': 'Cairo',
       'description': '',
       'start': {
-      'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+      'dateTime': app_date.strftime("%Y-%m-%dT%H:%M:%S"),
       'timeZone': 'Africa/Cairo',
        },
       'end': {
-      'dateTime': start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+      'dateTime': end_time.strftime("%Y-%m-%dT%H:%M:%S"),
       'timeZone': 'Africa/Cairo',
       },
       'reminders': {
       'useDefault': False,
-     #'overrides': [
-      #{'method': 'email', 'minutes': 24 * 60},
-      #{'method': 'popup', 'minutes': 10},
-      #],
+      'overrides': [
+      {'method': 'email', 'minutes': 24 * 60},
+      {'method': 'popup', 'minutes': 10},
+      ],
       },
      }
 
