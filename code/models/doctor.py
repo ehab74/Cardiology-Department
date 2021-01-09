@@ -97,7 +97,7 @@ class DoctorModel(db.Model):
     @classmethod
     def find_docotor_by_id_with_appointments(cls, doctor_id):
         return (
-            cls.query.join(AppointmentModel, AppointmentModel.doctor_id == cls.id)
+            cls.query.outerjoin(AppointmentModel, AppointmentModel.doctor_id == cls.id)
             .filter(doctor_id == cls.id)
             .first()
         )

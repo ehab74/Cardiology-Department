@@ -59,8 +59,9 @@ class appointment(Resource):
 
         apps_date = AppointmentModel.find_by_date(app_date)
 
-        if apps_date and apps_date.patient_id == identity:
-            return {"message": "Appointment already exists at the same date"}
+        for app in apps_date:
+          if app.patient_id == identity:
+             return {"message": "Appointment already exists at the same date"}
 
         AppointmentModel.main(app_date)
         appointment = AppointmentModel(**data)

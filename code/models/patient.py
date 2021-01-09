@@ -91,7 +91,7 @@ class PatientModel(db.Model):
     def find_by_id(PatientModel, patient_id):
         patientAppointments = (
             PatientModel.query.filter(PatientModel.id == patient_id)
-            .join(AppointmentModel, PatientModel.id == AppointmentModel.patient_id)
+            .outerjoin(AppointmentModel, PatientModel.id == AppointmentModel.patient_id)
             .first()
         )
         return patientAppointments
