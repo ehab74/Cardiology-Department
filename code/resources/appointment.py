@@ -20,7 +20,7 @@ class appointment(Resource):
         "doctor_id", type=str, required=True, help="This field cannot be blank."
     )
     appointment_parser.add_argument(
-        "description", type=str, required=False, help="This field cannot be blank."
+        "description", type=str, required=False
     )
     appointment_parser.add_argument("patient_id", type=int, required=False)
     appointment_parser.add_argument(

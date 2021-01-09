@@ -27,6 +27,7 @@ from resources.refresh import TokenRefresh
 from resources.admin import AdminRegister, AdmingLogin, AdminLogout
 # from resources.prescription import PrescriptionRegister, Prescription, PrescriptionsList, PatientPrescriptionList
 from resources.examination import Examination, ExaminationList, ExaminationRegister, PatientExaminations, CurrentPatientExaminations
+from resources.contact_us import ContactUs, ContactUsList, ContactUsRegister
 
 
 # pymysql.install_as_MySQLdb()
@@ -156,6 +157,9 @@ api.add_resource(PatientExaminations, "/patient/<int:patient_id>/examinations")
 api.add_resource(ExaminationList, "/examinations")
 api.add_resource(Examination, "/examination/<int:examination_id>")
 api.add_resource(CurrentPatientExaminations, "/patient/examinations")
+api.add_resource(ContactUsRegister, "/contactus/form")
+api.add_resource(ContactUs, "/contactus/<int:form_id>")
+api.add_resource(ContactUsList, "/contactus/forms")
 
 if __name__ == "__main__":
     from db import db
