@@ -52,7 +52,7 @@ class DoctorModel(db.Model):
             "birthdate": str(self.birthdate),
             "age": (datetime.now() - self.birthdate).days // 365,
             "username": self.username,
-            "address":self.address
+            "address": self.address
             # 'appointments': [appointment.json() for appointment in self.appointments.all()],
         }
 
@@ -68,7 +68,7 @@ class DoctorModel(db.Model):
             "age": (datetime.now() - self.birthdate).days // 365,
             "username": self.username,
             "appointments": [appointment.json() for appointment in self.appointments],
-        }    
+        }
 
     def save_to_db(self):
         db.session.add(self)
@@ -92,8 +92,12 @@ class DoctorModel(db.Model):
 
     @classmethod
     def find_all(cls):
-        return cls.query.all()    
+        return cls.query.all()
 
     @classmethod
     def find_docotor_by_id_with_appointments(cls, doctor_id):
-        return cls.query.join(AppointmentModel,AppointmentModel.doctor_id==cls.id).filter(doctor_id == cls.id).first()
+        return (
+            cls.query.join(AppointmentModel, AppointmentModel.doctor_id == cls.id)
+            .filter(doctor_id == cls.id)
+            .first()
+        )

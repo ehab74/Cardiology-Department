@@ -23,8 +23,8 @@ class AdminRegister(Resource):
     @classmethod
     @jwt_required
     def post(cls):
-        if get_jwt_claims()['type'] != 'admin':
-            return {'message': 'Admin authorization required.'}, 401
+        if get_jwt_claims()["type"] != "admin":
+            return {"message": "Admin authorization required."}, 401
         _admin_parser_ = reqparse.RequestParser()
         _admin_parser_.add_argument("username", type=str, required=True, help=BLANK)
         _admin_parser_.add_argument("password", type=str, required=True, help=BLANK)

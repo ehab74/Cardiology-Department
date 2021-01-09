@@ -1,5 +1,6 @@
 from db import db
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
+
 # import pickle
 # import os.path
 # from googleapiclient.discovery import build
@@ -7,6 +8,7 @@ from datetime import datetime,timedelta
 # from google.auth.transport.requests import Request
 # from gcsa.google_calendar import GoogleCalendar
 # from gcsa.event import Event
+
 
 class AppointmentModel(db.Model):
     __tablename__ = "Appointments"
@@ -16,13 +18,15 @@ class AppointmentModel(db.Model):
     created_at = db.Column(db.DateTime)
     description = db.Column(db.String(5000))
 
-    doctor_id = db.Column(db.Integer, db.ForeignKey("Doctors.id",ondelete = 'SET NULL') )
-    patient_id = db.Column(db.Integer, db.ForeignKey("Patients.id",ondelete = 'SET NULL'))
+    doctor_id = db.Column(db.Integer, db.ForeignKey("Doctors.id", ondelete="SET NULL"))
+    patient_id = db.Column(
+        db.Integer, db.ForeignKey("Patients.id", ondelete="SET NULL")
+    )
 
     doctor = db.relationship("DoctorModel")
     patient = db.relationship("PatientModel")
 
-    def __init__(self, date, doctor_id, patient_id, created_at,description):
+    def __init__(self, date, doctor_id, patient_id, created_at, description):
         self.date = date
         self.doctor_id = doctor_id
         self.patient_id = patient_id
@@ -36,11 +40,10 @@ class AppointmentModel(db.Model):
             "patient_id": self.patient_id,
             "patient_username": self.patient.username,
             "doctor_id": self.doctor_id,
-            "doctor_username":self.doctor.username,
+            "doctor_username": self.doctor.username,
             "date_of_reservation": self.created_at.strftime("%Y-%m-%d"),
-            "description": self.description
-
-        }   
+            "description": self.description,
+        }
 
     def save_to_db(self):
         db.session.add(self)
@@ -59,8 +62,8 @@ class AppointmentModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find_by_date(cls,date):
-        return cls.query.filter_by(date=date).first()    
+    def find_by_date(cls, date):
+        return cls.query.filter_by(date=date).first()
 
     # def main(start_time):
 
@@ -82,7 +85,7 @@ class AppointmentModel(db.Model):
     #         pickle.dump(creds, token)
 
     #  service = build('calendar', 'v3', credentials=creds)
-    #  end_time = start_time + timedelta(hours = 4 ) 
+    #  end_time = start_time + timedelta(hours = 4 )
     #  event = {
     #   'summary': 'Doctor Appointment',
     #   'location': 'Cairo',
@@ -137,7 +140,3 @@ class AppointmentModel(db.Model):
     #     },
     #     }
     #     calendar.add_event(event)
-
-
-
-

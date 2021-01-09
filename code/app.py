@@ -13,20 +13,27 @@ from resources.doctor import (
     DoctorLogin,
     DoctorLogout,
     DoctorList,
-    DoctorPatient
+    DoctorPatient,
 )
 from resources.patient import (
     PatientRegister,
     Patient,
     PatientLogin,
     PatientLogout,
-    PatientList
+    PatientList,
 )
-from resources.appointment import appointment,deleteAppointments
+from resources.appointment import appointment, deleteAppointments
 from resources.refresh import TokenRefresh
 from resources.admin import AdminRegister, AdmingLogin, AdminLogout
+
 # from resources.prescription import PrescriptionRegister, Prescription, PrescriptionsList, PatientPrescriptionList
-from resources.examination import Examination, ExaminationList, ExaminationRegister, PatientExaminations, CurrentPatientExaminations
+from resources.examination import (
+    Examination,
+    ExaminationList,
+    ExaminationRegister,
+    PatientExaminations,
+    CurrentPatientExaminations,
+)
 from resources.contact_us import ContactUs, ContactUsList, ContactUsRegister
 
 
@@ -137,13 +144,13 @@ api.add_resource(DoctorLogout, "/doctor/logout")
 api.add_resource(DoctorList, "/doctors")
 api.add_resource(DoctorPatient, "/doctor/patients")
 api.add_resource(TokenRefresh, "/refresh")
-api.add_resource(PatientRegister, '/patient/register')
-api.add_resource(Patient, '/patient/<int:patient_id>')
-api.add_resource(PatientLogin, '/patient/login')
-#api.add_resource(TokenRefresh, '/patient/refresh')
-api.add_resource(PatientLogout, '/patient/logout')
-api.add_resource(appointment, '/appointments')
-api.add_resource(deleteAppointments,'/appointments/<int:app_id>')
+api.add_resource(PatientRegister, "/patient/register")
+api.add_resource(Patient, "/patient/<int:patient_id>")
+api.add_resource(PatientLogin, "/patient/login")
+# api.add_resource(TokenRefresh, '/patient/refresh')
+api.add_resource(PatientLogout, "/patient/logout")
+api.add_resource(appointment, "/appointments")
+api.add_resource(deleteAppointments, "/appointments/<int:app_id>")
 api.add_resource(PatientList, "/patients")
 api.add_resource(AdminRegister, "/admin/register")
 api.add_resource(AdmingLogin, "/admin/login")
