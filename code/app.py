@@ -31,8 +31,7 @@ from resources.examination import (
     Examination,
     ExaminationList,
     ExaminationRegister,
-    PatientExaminations,
-    CurrentPatientExaminations,
+    PatientExaminations
 )
 from resources.contact_us import ContactUs, ContactUsList, ContactUsRegister
 
@@ -158,7 +157,6 @@ api.add_resource(ExaminationRegister, "/appointments/<int:app_id>/examinations")
 api.add_resource(PatientExaminations, "/patient/<int:patient_id>/examinations")
 api.add_resource(ExaminationList, "/examinations") # for admin-> all examinations, and patient -> logged in patient examinations
 api.add_resource(Examination, "/examination/<int:examination_id>")
-api.add_resource(CurrentPatientExaminations, "/patient/examinations")
 api.add_resource(ContactUsRegister, "/contactus/form")
 api.add_resource(ContactUs, "/contactus/<int:form_id>")
 api.add_resource(ContactUsList, "/contactus/forms")

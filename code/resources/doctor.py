@@ -71,15 +71,15 @@ class DoctorRegister(Resource):
 
         if len(data["username"]) < 4:
             return {"message": "Username is too short"}, 400
-            
+
         if DoctorModel.find_by_username(data["username"]):
             return {"message": DOCTOR_ALREADY_EXISTS}, 400
 
         if DoctorModel.find_by_email(data["email"]):
             return {"message": DOCTOR_ALREADY_EXISTS2}, 400
 
-        if ((datetime.now() - data['birthdate']).days // 365) < 25:
-            return {"message":"Inappropriate age"},400   
+        if ((datetime.now() - data["birthdate"]).days // 365) < 25:
+            return {"message": "Inappropriate age"}, 400
 
         user = DoctorModel(**data)
         user.save_to_db()

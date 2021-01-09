@@ -59,7 +59,7 @@ class Examination(Resource):
         if get_jwt_claims()["type"] == "doctor" or get_jwt_claims()["type"] == "admin":
             examination = ExaminationModel.find_by_id_with_info(examination_id)
             if not examination:
-                return {"message":"Examination not found"},404
+                return {"message": "Examination not found"}, 404
             return examination.json()
         return {"message": "Invalid authorization"}
 
@@ -69,7 +69,7 @@ class Examination(Resource):
         if get_jwt_claims()["type"] == "admin":
             examination = ExaminationModel.find_by_id(examination_id)
             if not examination:
-                return {"message":"Examination not found"},404
+                return {"message": "Examination not found"}, 404
             examination.delete_from_db()
             return {"message": "Deleted Successfully."}
         return {"message": "Unauthorized: Admin authorization required."}
@@ -95,5 +95,4 @@ class ExaminationList(Resource):
             ]
             return examination_list, 200
         else:
-            return {"message":"Authorization required"}    
-            
+            return {"message": "Authorization required"}

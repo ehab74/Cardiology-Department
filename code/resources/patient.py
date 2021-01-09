@@ -67,9 +67,9 @@ class PatientRegister(Resource):
         if PatientModel.find_by_email(data["email"]):
             return {"message": "A user with that email already exists"}, 400
 
-        if ((datetime.now() - data['birthdate']).days // 365) < 25:
-            return {"message":"Inappropriate age"},400   
-    
+        if ((datetime.now() - data["birthdate"]).days // 365) < 25:
+            return {"message": "Inappropriate age"}, 400
+
         data["gender"] = int(data["gender"])
         if data["gender"] != 0 and data["gender"] != 1:
             return {
