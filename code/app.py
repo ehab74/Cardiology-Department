@@ -1,6 +1,8 @@
+import os
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_cors import CORS
+from flask_uploads import configure_uploads, patch_request_class
 from flask_jwt_extended import JWTManager, get_raw_jwt
 import mysql.connector
 
@@ -11,7 +13,6 @@ from resources.doctor import (
     DoctorRegister,
     Doctor,
     DoctorLogin,
-    DoctorLogout,
     DoctorList,
     DoctorPatient,
 )
@@ -19,25 +20,26 @@ from resources.patient import (
     PatientRegister,
     Patient,
     PatientLogin,
-    PatientLogout,
     PatientList,
 )
 from resources.appointment import appointment, deleteAppointments
-from resources.refresh import TokenRefresh
-from resources.admin import AdminRegister, AdmingLogin, AdminLogout
+from resources.admin import AdminRegister, AdmingLogin
+from resources.uploads import UploadImage, PatientImages
+from models.image_helper import IMAGE_SET
+from resources.logout import Logout
 
 # from resources.prescription import PrescriptionRegister, Prescription, PrescriptionsList, PatientPrescriptionList
 from resources.examination import (
     Examination,
     ExaminationList,
     ExaminationRegister,
-    PatientExaminations
+    PatientExaminations,
 )
 from resources.contact_us import ContactUs, ContactUsList, ContactUsRegister
 
 
 # pymysql.install_as_MySQLdb()
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static")
 CORS(app)
 app.config[
     "SQLALCHEMY_DATABASE_URI"
@@ -46,7 +48,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 app.config["JWT_BLACKLIST_ENABLED"] = True
 app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = ["access", "refresh"]
+app.config["UPLOADED_IMAGES_DEST"] = os.path.join("static", "images")
 app.secret_key = "my_secret_key"
+patch_request_class(app, 10 * 1024 * 1024)
+configure_uploads(app, IMAGE_SET)
 api = Api(app)
 
 database = "cardio"
@@ -139,27 +144,28 @@ def revoked_token_callback():
 api.add_resource(DoctorRegister, "/doctor/register")
 api.add_resource(Doctor, "/doctor/<int:doctor_id>")
 api.add_resource(DoctorLogin, "/doctor/login")
-api.add_resource(DoctorLogout, "/doctor/logout")
 api.add_resource(DoctorList, "/doctors")
 api.add_resource(DoctorPatient, "/doctor/patients")
-api.add_resource(TokenRefresh, "/refresh")
-api.add_resource(PatientRegister, '/patient/register')
-api.add_resource(Patient, '/patient/<int:patient_id>')
-api.add_resource(PatientLogin, '/patient/login')
-api.add_resource(PatientLogout, '/patient/logout')
-api.add_resource(appointment, '/appointments')
-api.add_resource(deleteAppointments,'/appointments/<int:app_id>')
+api.add_resource(PatientRegister, "/patient/register")
+api.add_resource(Patient, "/patient/<int:patient_id>")
+api.add_resource(PatientLogin, "/patient/login")
+api.add_resource(appointment, "/appointments")
+api.add_resource(deleteAppointments, "/appointments/<int:app_id>")
 api.add_resource(PatientList, "/patients")
 api.add_resource(AdminRegister, "/admin/register")
 api.add_resource(AdmingLogin, "/admin/login")
-api.add_resource(AdminLogout, "/admin/logout")
 api.add_resource(ExaminationRegister, "/appointments/<int:app_id>/examinations")
 api.add_resource(PatientExaminations, "/patient/<int:patient_id>/examinations")
-api.add_resource(ExaminationList, "/examinations") # for admin-> all examinations, and patient -> logged in patient examinations
+api.add_resource(
+    ExaminationList, "/examinations"
+)  # for admin-> all examinations, and patient -> logged in patient examinations
 api.add_resource(Examination, "/examination/<int:examination_id>")
 api.add_resource(ContactUsRegister, "/contactus/form")
 api.add_resource(ContactUs, "/contactus/<int:form_id>")
 api.add_resource(ContactUsList, "/contactus/forms")
+api.add_resource(UploadImage, "/upload/image/<int:patient_id>")
+api.add_resource(PatientImages, "/images/<int:patient_id>")
+api.add_resource(Logout, "/logout")
 
 if __name__ == "__main__":
     from db import db

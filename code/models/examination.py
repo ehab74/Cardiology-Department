@@ -36,15 +36,14 @@ class ExaminationModel(db.Model):
             "_id": self.id,
             "diagnosis": self.diagnosis,
             "prescription": self.prescription,
-        }    
+        }
 
     def json_with_info(self):
         return {
             "_id": self.id,
             "diagnosis": self.diagnosis,
             "prescription": self.prescription,
-            "appointment": {**self.appointment.json()}
-
+            "appointment": {**self.appointment.json()},
         }
 
     def save_to_db(self):

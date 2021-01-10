@@ -1,0 +1,43 @@
+from flask import Flask, request, send_file
+from flask_restful import Resource, Api, reqparse
+from flask_uploads import UploadNotAllowed
+from models import image_helper
+from werkzeug.datastructures import FileStorage
+import traceback
+import os
+from flask_jwt_extended import jwt_required, get_jwt_claims
+from models.patient import PatientModel
+
+
+class UploadImage(Resource):
+    def post(self, patient_id):
+        if not PatientModel.find_by_id(patient_id):
+            return {"message": "A patient with this id does not exist"}
+        data = request.files
+        print(type(data))
+        if type(data["image"]) != FileStorage:
+            return {"message": "Invalid data."}
+        image_path = image_helper.save_image(
+            data["image"], folder=f"patient_{patient_id}"
+        )
+        basename = image_helper.get_basename(image_path)
+        return {"message": "image uploaded"}
+
+
+class PatientImages(Resource):
+    @jwt_required
+    def get(self, patient_id):
+        if get_jwt_claims()["type"] == "patient":
+            return {
+                "message": "Invalid authorization: you must be a doctor or an admin."
+            }, 401
+        if not PatientModel.find_by_id(patient_id):
+            return {"message": "A patient with this id does not exist"}
+        folder = os.getcwd()
+        dirs = os.listdir(f"{folder}/static/images/patient_{patient_id}")
+        file_list = []
+        for file in dirs:
+            file_list.append(
+                {"image": f"localhost:5000/static/images/patient_{patient_id}/{file}"}
+            )
+        return file_list

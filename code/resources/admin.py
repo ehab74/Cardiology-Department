@@ -12,7 +12,6 @@ from flask_jwt_extended import (
     get_jwt_claims,
 )
 from datetime import datetime, timedelta
-from blacklist import BLACKLIST
 
 BLANK = "This field cannot be left blank."
 INVALID_CREDENTIALS = "Invalid Credintials"
@@ -71,13 +70,3 @@ class AdmingLogin(Resource):
             )
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
         return {"message": INVALID_CREDENTIALS}, 401
-
-
-class AdminLogout(Resource):
-    @classmethod
-    @jwt_required
-    def post(cls):
-        jti = get_raw_jwt()["jti"]  # jti is "JWT ID", a unique identifier for a JWT.
-        BLACKLIST.add(jti)
-        admin_id = get_jwt_identity()
-        return {"message": USER_LOGGED_OUT.format(admin_id=admin_id)}
