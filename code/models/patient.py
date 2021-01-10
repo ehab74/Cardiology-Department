@@ -61,7 +61,7 @@ class PatientModel(db.Model):
             "birthdate": str(self.birthdate),
             "age": (datetime.now() - self.birthdate).days // 365,
             "username": self.username,
-            "address":self.address
+            "address": self.address,
         }
 
     def json_with_info(self):
@@ -76,7 +76,10 @@ class PatientModel(db.Model):
             "age": (datetime.now() - self.birthdate).days // 365,
             "username": self.username,
             "appointments": [appointment.json() for appointment in self.appointments],
-            "examinations": [examination.mini_json() for examination in PatientModel.get_examinations(self.id)]
+            "examinations": [
+                examination.mini_json()
+                for examination in PatientModel.get_examinations(self.id)
+            ],
         }
 
     def save_to_db(self):
@@ -115,8 +118,15 @@ class PatientModel(db.Model):
             AppointmentModel, PatientModel.id == AppointmentModel.patient_id
         ).filter(AppointmentModel.doctor_id == doctor_id)
         return patientList
-    
+
     @classmethod
-    def get_examinations(cls,patient_id):
-        examinations = ExaminationModel.query.join(AppointmentModel, AppointmentModel.id ==ExaminationModel.appointment_id ).join(PatientModel, cls.id == AppointmentModel.patient_id) .filter(cls.id == patient_id).all()
-        return examinations    
+    def get_examinations(cls, patient_id):
+        examinations = (
+            ExaminationModel.query.join(
+                AppointmentModel, AppointmentModel.id == ExaminationModel.appointment_id
+            )
+            .join(PatientModel, cls.id == AppointmentModel.patient_id)
+            .filter(cls.id == patient_id)
+            .all()
+        )
+        return examinations

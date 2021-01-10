@@ -1,5 +1,5 @@
 from db import db
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 import pickle
 import os.path
 from googleapiclient.discovery import build
@@ -64,54 +64,55 @@ class AppointmentModel(db.Model):
 
     def main(start_time):
 
-     SCOPES = ['https://www.googleapis.com/auth/calendar']
-     creds = None
+        SCOPES = ["https://www.googleapis.com/auth/calendar"]
+        creds = None
 
-     if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
+        if os.path.exists("token.pickle"):
+            with open("token.pickle", "rb") as token:
+                creds = pickle.load(token)
 
-     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'client_secrets2.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    "client_secrets2.json", SCOPES
+                )
+                creds = flow.run_local_server(port=0)
+            with open("token.pickle", "wb") as token:
+                pickle.dump(creds, token)
 
-     service = build('calendar', 'v3', credentials=creds)
+        service = build("calendar", "v3", credentials=creds)
 
-     app_date = start_time.strftime("%Y-%m-%d")
+        app_date = start_time.strftime("%Y-%m-%d")
 
-     y1, m1, d1 = [int(x) for x in app_date.split("-")]
+        y1, m1, d1 = [int(x) for x in app_date.split("-")]
 
-     app_date = datetime(y1, m1, d1,9,0,0)
+        app_date = datetime(y1, m1, d1, 9, 0, 0)
 
-     end_time = app_date + timedelta(hours = 4 ) 
-     event = {
-      'summary': 'Doctor Appointment',
-      'location': 'Cairo',
-      'description': '',
-      'start': {
-      'dateTime': app_date.strftime("%Y-%m-%dT%H:%M:%S"),
-      'timeZone': 'Africa/Cairo',
-       },
-      'end': {
-      'dateTime': end_time.strftime("%Y-%m-%dT%H:%M:%S"),
-      'timeZone': 'Africa/Cairo',
-      },
-      'reminders': {
-      'useDefault': False,
-      'overrides': [
-      {'method': 'email', 'minutes': 24 * 60},
-      {'method': 'popup', 'minutes': 10},
-      ],
-      },
-     }
+        end_time = app_date + timedelta(hours=4)
+        event = {
+            "summary": "Doctor Appointment",
+            "location": "Cairo",
+            "description": "",
+            "start": {
+                "dateTime": app_date.strftime("%Y-%m-%dT%H:%M:%S"),
+                "timeZone": "Africa/Cairo",
+            },
+            "end": {
+                "dateTime": end_time.strftime("%Y-%m-%dT%H:%M:%S"),
+                "timeZone": "Africa/Cairo",
+            },
+            "reminders": {
+                "useDefault": False,
+                "overrides": [
+                    {"method": "email", "minutes": 24 * 60},
+                    {"method": "popup", "minutes": 10},
+                ],
+            },
+        }
 
-     service.events().insert(calendarId='primary', body=event).execute()
+        service.events().insert(calendarId="primary", body=event).execute()
 
     # def calendar (start_time,email):
 

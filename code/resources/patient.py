@@ -10,7 +10,6 @@ from flask_jwt_extended import (
     jwt_required,
 )
 from models.patient import PatientModel
-from blacklist import BLACKLIST
 from datetime import datetime, timedelta
 
 
@@ -68,9 +67,9 @@ class PatientRegister(Resource):
             return {"message": "A user with that email already exists"}, 400
 
         y, m, d = [int(x) for x in data["birthdate"].split("-")]
-        data['birthdate'] = datetime(y,m,d)
+        data["birthdate"] = datetime(y, m, d)
         if ((datetime.now() - data["birthdate"]).days // 365) < 1:
-            return {"message": "Inappropriate age"}, 400
+            return {"message": "Invalid age"}, 400
 
         data["gender"] = int(data["gender"])
         if data["gender"] != 0 and data["gender"] != 1:
@@ -135,14 +134,6 @@ class PatientLogin(Resource):
             )
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
         return {"message": "Invaild credentials"}, 401
-
-
-class PatientLogout(Resource):
-    @jwt_required
-    def post(self):
-        jti = get_raw_jwt()["jti"]  # jti is a "JWT ID", a unique identifier for a JWT
-        BLACKLIST.add(jti)
-        return {"message": "Sucessfully logged out"}, 200
 
 
 class PatientList(Resource):

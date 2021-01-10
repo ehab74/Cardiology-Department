@@ -13,7 +13,6 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_jwt_claims,
 )
-from blacklist import BLACKLIST
 from datetime import datetime, timedelta
 
 BLANK = "This field cannot be left blank."
@@ -31,7 +30,10 @@ USER_LOGGED_OUT = "Doctor <id={doctor_id}> successfully logged out."
 
 class DoctorRegister(Resource):
     @classmethod
+    @jwt_required
     def post(cls):
+        if  get_jwt_claims()['type'] != 'admin':
+            return {'message': 'only an admin can register doctors.'}, 401
         _doctor_parser = reqparse.RequestParser()
         _doctor_parser.add_argument("username", type=str, required=True, help=BLANK)
 
@@ -77,11 +79,11 @@ class DoctorRegister(Resource):
 
         if DoctorModel.find_by_email(data["email"]):
             return {"message": DOCTOR_ALREADY_EXISTS2}, 400
-        
+
         y, m, d = [int(x) for x in data["birthdate"].split("-")]
-        data['birthdate'] = datetime(y,m,d)
+        data["birthdate"] = datetime(y, m, d)
         if ((datetime.now() - data["birthdate"]).days // 365) < 25:
-            return {"message": "Inappropriate age"}, 400
+            return {"message": "Invalid age"}, 400
 
         user = DoctorModel(**data)
         user.save_to_db()
@@ -134,16 +136,6 @@ class DoctorLogin(Resource):
             )
             return {"access_token": access_token, "refresh_token": refresh_token}, 200
         return {"message": INVALID_CREDENTIALS}, 401
-
-
-class DoctorLogout(Resource):
-    @classmethod
-    @jwt_required
-    def post(cls):
-        jti = get_raw_jwt()["jti"]  # jti is "JWT ID", a unique identifier for a JWT.
-        BLACKLIST.add(jti)
-        doctor_id = get_jwt_identity()
-        return {"message": USER_LOGGED_OUT.format(doctor_id=doctor_id)}
 
 
 class DoctorList(Resource):
