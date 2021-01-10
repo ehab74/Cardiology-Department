@@ -43,3 +43,21 @@ class PatientImages(Resource):
                 {"image": f"http://localhost:5000/static/images/patient_{patient_id}/{file}"}
             )
         return file_list
+
+class DeleteImage(Resource):    
+    @jwt_required
+    def delete(self, patient_id):
+        if get_jwt_claims()['type'] != 'admin':
+            return {'message': 'Invalid authorization, you have to be an admin.'}, 401
+        if not PatientModel.find_by_id(patient_id):
+            return {"message": "A patient with this id does not exist"}, 404
+        filename = request.args.get('filename')
+        folder = os.getcwd()
+        dirs = os.listdir(f"{folder}/static/images/patient_{patient_id}")
+        for file in dirs:
+            if filename == file:
+                os.remove(image_helper.get_path(file, folder=f"{folder}/static/images/patient_{patient_id}"))
+                return {'message': 'file deleted'}
+        return {'message': 'file not found'}, 404
+        
+

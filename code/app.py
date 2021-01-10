@@ -24,7 +24,7 @@ from resources.patient import (
 )
 from resources.appointment import appointment, deleteAppointments
 from resources.admin import AdminRegister, AdmingLogin
-from resources.uploads import UploadImage, PatientImages
+from resources.uploads import UploadImage, PatientImages, DeleteImage
 from models.image_helper import IMAGE_SET
 from resources.logout import Logout
 
@@ -166,6 +166,7 @@ api.add_resource(ContactUsList, "/contactus/forms")
 api.add_resource(UploadImage, "/upload/image/<int:patient_id>")
 api.add_resource(PatientImages, "/images/<int:patient_id>")
 api.add_resource(Logout, "/logout")
+api.add_resource(DeleteImage, "/image/delete/<int:patient_id>")
 
 if __name__ == "__main__":
     from db import db
