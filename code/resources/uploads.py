@@ -17,7 +17,6 @@ class UploadImage(Resource):
         if not PatientModel.find_by_id(patient_id):
             return {"message": "A patient with this id does not exist"}, 404
         data = request.files
-        print(type(data))
         if type(data["image"]) != FileStorage:
             return {"message": "Invalid data."}
         image_path = image_helper.save_image(
