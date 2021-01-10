@@ -40,6 +40,6 @@ class PatientImages(Resource):
         file_list = []
         for file in dirs:
             file_list.append(
-                {"image": f"http://hlocalhost:5000/static/images/patient_{patient_id}/{file}"}
+                {"image": f"http://localhost:5000/static/images/patient_{patient_id}/{file}"}
             )
         return file_list
