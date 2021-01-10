@@ -32,7 +32,7 @@ class DoctorRegister(Resource):
     @classmethod
     @jwt_required
     def post(cls):
-        if  get_jwt_claims != 'admin':
+        if  get_jwt_claims()['type'] != 'admin':
             return {'message': 'only an admin can register doctors.'}, 401
         _doctor_parser = reqparse.RequestParser()
         _doctor_parser.add_argument("username", type=str, required=True, help=BLANK)
