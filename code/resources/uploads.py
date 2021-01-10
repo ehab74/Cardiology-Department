@@ -10,9 +10,12 @@ from models.patient import PatientModel
 
 
 class UploadImage(Resource):
+    @jwt_required
     def post(self, patient_id):
+        if get_jwt_claims()['type'] == 'patient':
+            {'message': 'Invalid authorization'}, 401
         if not PatientModel.find_by_id(patient_id):
-            return {"message": "A patient with this id does not exist"}
+            return {"message": "A patient with this id does not exist"}, 404
         data = request.files
         print(type(data))
         if type(data["image"]) != FileStorage:
@@ -21,7 +24,7 @@ class UploadImage(Resource):
             data["image"], folder=f"patient_{patient_id}"
         )
         basename = image_helper.get_basename(image_path)
-        return {"message": "image uploaded"}
+        return {"message": "image uploaded"}, 201
 
 
 class PatientImages(Resource):
