@@ -20,9 +20,9 @@ USER_LOGGED_OUT = "Logged out successfully"
 
 class AdminRegister(Resource):
     @classmethod
-    #@jwt_required
+    # @jwt_required
     def post(cls):
-        #if get_jwt_claims()["type"] != "admin":
+        # if get_jwt_claims()["type"] != "admin":
         #    return {"message": "Admin authorization required."}, 401
         _admin_parser_ = reqparse.RequestParser()
         _admin_parser_.add_argument("username", type=str, required=True, help=BLANK)

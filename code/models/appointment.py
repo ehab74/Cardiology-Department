@@ -11,8 +11,8 @@ class AppointmentModel(db.Model):
     __tablename__ = "Appointments"
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime)
-    created_at = db.Column(db.DateTime)
+    date = db.Column(db.Date)
+    created_at = db.Column(db.Date)
     description = db.Column(db.String(5000))
 
     doctor_id = db.Column(db.Integer, db.ForeignKey("Doctors.id", ondelete="SET NULL"))

@@ -8,7 +8,7 @@ import mysql.connector
 
 # import pymysql
 from blacklist import BLACKLIST
-
+from datetime import datetime
 from resources.doctor import (
     DoctorRegister,
     Doctor,
@@ -27,6 +27,7 @@ from resources.admin import AdminRegister, AdmingLogin
 from resources.uploads import UploadImage, PatientImages, DeleteImage
 from models.image_helper import IMAGE_SET
 from resources.logout import Logout
+from resources.analytics import Analytics
 
 # from resources.prescription import PrescriptionRegister, Prescription, PrescriptionsList, PatientPrescriptionList
 from resources.examination import (
@@ -167,6 +168,9 @@ api.add_resource(UploadImage, "/upload/image/<int:patient_id>")
 api.add_resource(PatientImages, "/images/<int:patient_id>")
 api.add_resource(Logout, "/logout")
 api.add_resource(DeleteImage, "/image/delete/<int:patient_id>")
+api.add_resource(Analytics, "/analytics")
+
+
 
 if __name__ == "__main__":
     from db import db

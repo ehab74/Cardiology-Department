@@ -32,8 +32,8 @@ class DoctorRegister(Resource):
     @classmethod
     @jwt_required
     def post(cls):
-        if  get_jwt_claims()['type'] != 'admin':
-            return {'message': 'only an admin can register doctors.'}, 401
+        if get_jwt_claims()["type"] != "admin":
+            return {"message": "only an admin can register doctors."}, 401
         _doctor_parser = reqparse.RequestParser()
         _doctor_parser.add_argument("username", type=str, required=True, help=BLANK)
 
@@ -84,6 +84,8 @@ class DoctorRegister(Resource):
         data["birthdate"] = datetime(y, m, d)
         if ((datetime.now() - data["birthdate"]).days // 365) < 25:
             return {"message": "Invalid age"}, 400
+
+        data["created_at"] = datetime.now().date()
 
         user = DoctorModel(**data)
         user.save_to_db()
@@ -141,8 +143,10 @@ class DoctorLogin(Resource):
 class DoctorList(Resource):
     @classmethod
     def get(cls):
+
         doctors = DoctorModel.find_all()
         doctors_list = [doctor.json() for doctor in doctors]
+        date = datetime(2021, 1, 12).date()
         return doctors_list, 200
 
 

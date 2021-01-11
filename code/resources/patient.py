@@ -67,8 +67,8 @@ class PatientRegister(Resource):
             return {"message": "A user with that email already exists"}, 400
 
         y, m, d = [int(x) for x in data["birthdate"].split("-")]
-        data["birthdate"] = datetime(y, m, d)
-        if ((datetime.now() - data["birthdate"]).days // 365) < 1:
+        data["birthdate"] = datetime(y, m, d).date()
+        if ((datetime.now().date() - data["birthdate"]).days // 365) < 1:
             return {"message": "Invalid age"}, 400
 
         data["gender"] = int(data["gender"])
@@ -76,6 +76,8 @@ class PatientRegister(Resource):
             return {
                 "message": "Invalid request: gender is only '0' if male or '1' if female"
             }
+
+        data["created_at"] = datetime.now().date()
 
         patient = PatientModel(**data)
         patient.save_to_db()

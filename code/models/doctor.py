@@ -15,7 +15,8 @@ class DoctorModel(db.Model):
     gender = db.Column(db.Integer)
     address = db.Column(db.String(80))
     mobile = db.Column(db.String(80))
-    birthdate = db.Column(db.DateTime)
+    birthdate = db.Column(db.Date)
+    created_at = db.Column(db.Date)
 
     appointments = db.relationship("AppointmentModel")
 
@@ -30,6 +31,7 @@ class DoctorModel(db.Model):
         username,
         password,
         address,
+        created_at,
     ):
         self.username = username
         self.password = generate_password_hash(password)
@@ -40,6 +42,7 @@ class DoctorModel(db.Model):
         self.mobile = mobile
         self.address = address
         self.birthdate = birthdate
+        self.created_at = created_at
 
     def json(self):
         return {
@@ -50,7 +53,7 @@ class DoctorModel(db.Model):
             "mobile": self.mobile,
             "gender": "male" if self.gender == 0 else "female",
             "birthdate": str(self.birthdate),
-            "age": (datetime.now() - self.birthdate).days // 365,
+            "age": (datetime.now().date() - self.birthdate).days // 365,
             "username": self.username,
             "address": self.address
             # 'appointments': [appointment.json() for appointment in self.appointments.all()],
@@ -65,7 +68,7 @@ class DoctorModel(db.Model):
             "mobile": self.mobile,
             "gender": "male" if self.gender == 0 else "female",
             "birthdate": str(self.birthdate),
-            "age": (datetime.now() - self.birthdate).days // 365,
+            "age": (datetime.now().date() - self.birthdate).days // 365,
             "username": self.username,
             "appointments": [appointment.json() for appointment in self.appointments],
         }
@@ -85,7 +88,7 @@ class DoctorModel(db.Model):
     @classmethod
     def find_by_id(cls, _id: int):
         return cls.query.filter_by(id=_id).first()
-    
+
     @classmethod
     def find_by_email(cls, email):
         return cls.query.filter_by(email=email).first()

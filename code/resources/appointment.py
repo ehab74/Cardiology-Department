@@ -46,15 +46,12 @@ class appointment(Resource):
         if not doctor:
             return {"message": "Doctor not found"}, 404
 
-        data["created_at"] = datetime.now().strftime("%Y-%m-%d")
-        y2, m2, d2 = [int(x) for x in data["created_at"].split("-")]
+        data["created_at"] = datetime.now().date()
         y1, m1, d1 = [int(x) for x in data["date"].split("-")]
 
-        app_date = datetime(y1, m1, d1)
-        app_dateTime = datetime(y1, m1, d1, 21, 30, 0)
-        created_at = datetime(y2, m2, d2)
+        app_date = datetime(y1, m1, d1).date()
 
-        if app_date < created_at:
+        if app_date < data["created_at"]:
             return {"message": "Invalid date"}
 
         apps_date = AppointmentModel.find_by_date(app_date)

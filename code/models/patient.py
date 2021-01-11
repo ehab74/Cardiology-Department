@@ -22,9 +22,10 @@ class PatientModel(db.Model):
     mobile = db.Column(db.String(80))
     address = db.Column(db.String(80))
     gender = db.Column(db.Integer)
-    birthdate = db.Column(db.DateTime)
+    birthdate = db.Column(db.Date)
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(128))
+    created_at = db.Column(db.Date)
 
     appointments = db.relationship("AppointmentModel")
 
@@ -39,6 +40,7 @@ class PatientModel(db.Model):
         username,
         password,
         address,
+        created_at,
     ):
         self.first_name = first_name
         self.last_name = last_name
@@ -49,6 +51,7 @@ class PatientModel(db.Model):
         self.username = username
         self.password = generate_password_hash(password)
         self.address = address
+        self.created_at = created_at
 
     def json(self):
         return {
@@ -59,7 +62,7 @@ class PatientModel(db.Model):
             "mobile": self.mobile,
             "gender": "male" if self.gender == 0 else "female",
             "birthdate": str(self.birthdate),
-            "age": (datetime.now() - self.birthdate).days // 365,
+            "age": (datetime.now().date() - self.birthdate).days // 365,
             "username": self.username,
             "address": self.address,
         }
@@ -73,7 +76,7 @@ class PatientModel(db.Model):
             "mobile": self.mobile,
             "gender": "male" if self.gender == 0 else "female",
             "birthdate": str(self.birthdate),
-            "age": (datetime.now() - self.birthdate).days // 365,
+            "age": (datetime.now().date() - self.birthdate).days // 365,
             "username": self.username,
             "appointments": [appointment.json() for appointment in self.appointments],
             "examinations": [
@@ -97,7 +100,6 @@ class PatientModel(db.Model):
             .outerjoin(AppointmentModel, PatientModel.id == AppointmentModel.patient_id)
             .first()
         )
-        print(patientAppointments)
         return patientAppointments
 
     @classmethod
