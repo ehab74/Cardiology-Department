@@ -36,19 +36,22 @@ def find_count(date: datetime):
         .group_by(PatientModel.created_at)
         .all()
     )
-
     appointment = 0
     doctor = 0
     patient = 0
     for x in analytics_list:
-        if x["date"] == appointments[appointment][0]:
-            x["appointments"] = appointments[appointment][1]
-            appointment += 1
-        if x["date"] == doctors[doctor][0]:
-            x["doctors"] = doctors[doctor][1]
-            doctor += 1
-        if x["date"] == patients[patient][0]:
-            x["patients"] = patients[patient][1]
-            patient += 1
+        if appointments:
+            if x["date"] == appointments[appointment][0]:
+                x["appointments"] = appointments[appointment][1]
+                appointment += 1
+        if doctors:
+            if x["date"] == doctors[doctor][0]:
+                x["doctors"] = doctors[doctor][1]
+                doctor += 1
+        if patients:
+            if x["date"] == patients[patient][0]:
+                x["patients"] = patients[patient][1]
+                patient += 1
         x["date"] = x["date"].strftime("%Y-%m-%d")
+
     return analytics_list
