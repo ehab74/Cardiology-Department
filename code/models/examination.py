@@ -86,9 +86,9 @@ class ExaminationModel(db.Model):
     def find_all(cls):
         return (
             cls.query.join(Appointment, Appointment.id == cls.appointment_id)
-            .join(
+            .outerjoin(
                 Patient.PatientModel, Patient.PatientModel.id == Appointment.patient_id
             )
-            .join(Doctor, Doctor.id == Appointment.doctor_id)
+            .outerjoin(Doctor, Doctor.id == Appointment.doctor_id)
             .all()
         )
