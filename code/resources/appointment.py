@@ -40,7 +40,11 @@ class appointment(Resource):
 
         data["patient_id"] = identity
 
+        data['patient_username'] = PatientModel.find_by_id(identity).username
+
         data["doctor_id"] = int(data["doctor_id"])
+
+        data['doctor_username'] = DoctorModel.find_by_id(data['doctor_id']).username
 
         doctor = DoctorModel.find_by_id(data["doctor_id"])
         if not doctor:

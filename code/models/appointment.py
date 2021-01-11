@@ -19,14 +19,18 @@ class AppointmentModel(db.Model):
     patient_id = db.Column(
         db.Integer, db.ForeignKey("Patients.id", ondelete="SET NULL")
     )
+    patient_username = db.Column(db.String(80))
+    doctor_username = db.Column(db.String(80))
 
     doctor = db.relationship("DoctorModel")
     patient = db.relationship("PatientModel")
 
-    def __init__(self, date, doctor_id, patient_id, created_at, description):
+    def __init__(self, date, doctor_id, patient_id, created_at, description,patient_username,doctor_username):
         self.date = date
         self.doctor_id = doctor_id
         self.patient_id = patient_id
+        self.patient_username = patient_username
+        self.doctor_username = doctor_username
         self.created_at = created_at
         self.description = description
 
@@ -35,9 +39,9 @@ class AppointmentModel(db.Model):
             "_id": self.id,
             "date": self.date.strftime("%Y-%m-%d"),
             "patient_id": self.patient_id,
-            "patient_username": self.patient.username,
+            "patient_username": self.patient_username,
             "doctor_id": self.doctor_id,
-            "doctor_username": self.doctor.username,
+            "doctor_username": self.doctor_username,
             "date_of_reservation": self.created_at.strftime("%Y-%m-%d"),
             "description": self.description,
         }
