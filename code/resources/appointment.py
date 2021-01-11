@@ -4,11 +4,7 @@ from datetime import datetime
 from models.doctor import DoctorModel
 from models.patient import PatientModel
 from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    jwt_refresh_token_required,
     jwt_required,
-    get_raw_jwt,
     get_jwt_identity,
     get_jwt_claims,
 )
@@ -29,7 +25,7 @@ class appointment(Resource):
     @jwt_required
     def post(cls):
         claims = get_jwt_claims()
-        if claims["type"] == "doctor":
+        if claims["type"] != "patient":
             return {"message": "Access denied"}
 
         data = cls.appointment_parser.parse_args()

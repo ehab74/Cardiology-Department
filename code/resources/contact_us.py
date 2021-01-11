@@ -2,13 +2,8 @@ from models.contact_us import ContactUsModel
 from flask_restful import Resource, reqparse
 from datetime import datetime
 from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    jwt_refresh_token_required,
     jwt_required,
-    get_raw_jwt,
-    get_jwt_identity,
-    get_jwt_claims,
+    get_jwt_claims
 )
 
 AUTHORIZATION_ERROR = "Admin authorization required"

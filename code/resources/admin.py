@@ -1,4 +1,3 @@
-from flask import jsonify
 from flask_restful import Resource, reqparse
 from models.admin import AdminModel
 from werkzeug.security import check_password_hash
@@ -7,7 +6,6 @@ from flask_jwt_extended import (
     create_refresh_token,
     jwt_refresh_token_required,
     jwt_required,
-    get_raw_jwt,
     get_jwt_identity,
     get_jwt_claims,
 )
