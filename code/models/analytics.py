@@ -39,16 +39,18 @@ def find_count(date: datetime):
     appointment = 0
     doctor = 0
     patient = 0
+    
     for x in analytics_list:
-        if appointments:
+        if appointments and appointment<len(appointments):
             if x["date"] == appointments[appointment][0]:
                 x["appointments"] = appointments[appointment][1]
                 appointment += 1
-        if doctors:
+
+        if doctors and doctor<len(doctors):
             if x["date"] == doctors[doctor][0]:
                 x["doctors"] = doctors[doctor][1]
                 doctor += 1
-        if patients:
+        if patients and patient<len(patients):
             if x["date"] == patients[patient][0]:
                 x["patients"] = patients[patient][1]
                 patient += 1
