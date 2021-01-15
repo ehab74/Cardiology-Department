@@ -44,7 +44,7 @@ app = Flask(__name__, static_url_path="/static")
 CORS(app)
 app.config[
     "SQLALCHEMY_DATABASE_URI"
-] = "mysql+mysqlconnector://root:mysql@localhost/cardio"  # "sqlite:///data.db"
+] = "mysql+mysqlconnector://root:mysql@localhost/project1"  # "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 app.config["JWT_BLACKLIST_ENABLED"] = True
@@ -55,7 +55,7 @@ patch_request_class(app, 10 * 1024 * 1024)
 configure_uploads(app, IMAGE_SET)
 api = Api(app)
 
-database = "cardio"
+database = "project1"
 
 
 @app.before_first_request
